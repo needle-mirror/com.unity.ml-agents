@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Barracuda;
-using MLAgents.Sensors;
-using MLAgents.Policies;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Policies;
+using Unity.Barracuda;
 
-namespace MLAgents.Inference
+namespace Unity.MLAgents.Inference
 {
     /// <summary>
     /// Prepares the Tensors for the Learning Brain and exposes a list of failed checks if Model
@@ -126,6 +126,7 @@ namespace MLAgents.Inference
         /// The BrainParameters that are used verify the compatibility with the InferenceEngine
         /// </param>
         /// <param name="sensorComponents">Attached sensor components</param>
+        /// <param name="behaviorType">BehaviorType or the Agent to check.</param>
         /// <returns>The list the error messages of the checks that failed</returns>
         public static IEnumerable<string> CheckModel(Model model, BrainParameters brainParameters,
             SensorComponent[] sensorComponents, BehaviorType behaviorType = BehaviorType.Default)
@@ -589,7 +590,7 @@ namespace MLAgents.Inference
                     "suggest Continuous Control.");
                 return failedModelChecks;
             }
-            var tensorTester = new Dictionary<string, Func<BrainParameters, TensorShape, int, string>>();
+            var tensorTester = new Dictionary<string, Func<BrainParameters, TensorShape?, int, string>>();
             if (brainParameters.VectorActionSpaceType == SpaceType.Continuous)
             {
                 tensorTester[TensorNames.ActionOutput] = CheckContinuousActionOutputShape;
@@ -603,7 +604,7 @@ namespace MLAgents.Inference
             {
                 if (tensorTester.ContainsKey(name))
                 {
-                    var tester = tensorTester[name];
+                    Func<BrainParameters, TensorShape?, int, string> tester = tensorTester[name];
                     var error = tester.Invoke(brainParameters, model.GetShapeByName(name), modelActionSize);
                     if (error != null)
                     {
@@ -630,7 +631,7 @@ namespace MLAgents.Inference
         /// check failed. If the check passed, returns null.
         /// </returns>
         static string CheckDiscreteActionOutputShape(
-            BrainParameters brainParameters, TensorShape shape, int modelActionSize)
+            BrainParameters brainParameters, TensorShape? shape, int modelActionSize)
         {
             var bpActionSize = brainParameters.VectorActionSize.Sum();
             if (modelActionSize != bpActionSize)
@@ -655,7 +656,7 @@ namespace MLAgents.Inference
         /// <returns>If the Check failed, returns a string containing information about why the
         /// check failed. If the check passed, returns null.</returns>
         static string CheckContinuousActionOutputShape(
-            BrainParameters brainParameters, TensorShape shape, int modelActionSize)
+            BrainParameters brainParameters, TensorShape? shape, int modelActionSize)
         {
             var bpActionSize = brainParameters.VectorActionSize[0];
             if (modelActionSize != bpActionSize)

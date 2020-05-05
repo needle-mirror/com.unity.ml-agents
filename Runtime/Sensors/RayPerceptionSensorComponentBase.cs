@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace MLAgents.Sensors
+namespace Unity.MLAgents.Sensors
 {
     /// <summary>
     /// A base class to support sensor components for raycast-based sensors.
@@ -112,7 +112,7 @@ namespace MLAgents.Sensors
 
         [HideInInspector, SerializeField, FormerlySerializedAs("observationStacks")]
         [Range(1, 50)]
-        [Tooltip("Whether to stack previous observations. Using 1 means no previous observations.")]
+        [Tooltip("Number of raycast results that will be stacked before being fed to the neural network.")]
         int m_ObservationStacks = 1;
 
         /// <summary>

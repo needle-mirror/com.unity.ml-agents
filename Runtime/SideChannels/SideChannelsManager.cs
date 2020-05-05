@@ -3,78 +3,85 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-namespace MLAgents.SideChannels
+namespace Unity.MLAgents.SideChannels
 {
     /// <summary>
     /// Collection of static utilities for managing the registering/unregistering of
     /// <see cref="SideChannels"/> and the sending/receiving of messages for all the channels.
     /// </summary>
-    public static class SideChannelUtils
+    public static class SideChannelsManager
     {
+        static Dictionary<Guid, SideChannel> s_RegisteredChannels = new Dictionary<Guid, SideChannel>();
 
-        private static Dictionary<Guid, SideChannel> RegisteredChannels = new Dictionary<Guid, SideChannel>();
-
-        private struct CachedSideChannelMessage
+        struct CachedSideChannelMessage
         {
             public Guid ChannelId;
             public byte[] Message;
         }
 
-        private static Queue<CachedSideChannelMessage> m_CachedMessages = new Queue<CachedSideChannelMessage>();
+        static readonly Queue<CachedSideChannelMessage> s_CachedMessages =
+            new Queue<CachedSideChannelMessage>();
 
         /// <summary>
-        /// Registers a side channel to the communicator. The side channel will exchange
-        /// messages with its Python equivalent.
+        /// Register a side channel to begin sending and receiving messages. This method is
+        /// available for environments that have custom side channels. All built-in side
+        /// channels within the ML-Agents Toolkit are managed internally and do not need to
+        /// be explicitly registered/unregistered. A side channel may only be registered once.
         /// </summary>
-        /// <param name="sideChannel"> The side channel to be registered.</param>
+        /// <param name="sideChannel">The side channel to register.</param>
         public static void RegisterSideChannel(SideChannel sideChannel)
         {
             var channelId = sideChannel.ChannelId;
-            if (RegisteredChannels.ContainsKey(channelId))
+            if (s_RegisteredChannels.ContainsKey(channelId))
             {
-                throw new UnityAgentsException(string.Format(
-                    "A side channel with type index {0} is already registered. You cannot register multiple " +
-                    "side channels of the same id.", channelId));
+                throw new UnityAgentsException(
+                    $"A side channel with id {channelId} is already registered. " +
+                    "You cannot register multiple side channels of the same id.");
             }
 
             // Process any messages that we've already received for this channel ID.
-            var numMessages = m_CachedMessages.Count;
-            for (int i = 0; i < numMessages; i++)
+            var numMessages = s_CachedMessages.Count;
+            for (var i = 0; i < numMessages; i++)
             {
-                var cachedMessage = m_CachedMessages.Dequeue();
+                var cachedMessage = s_CachedMessages.Dequeue();
                 if (channelId == cachedMessage.ChannelId)
                 {
-                    using (var incomingMsg = new IncomingMessage(cachedMessage.Message))
-                    {
-                        sideChannel.OnMessageReceived(incomingMsg);
-                    }
+                    sideChannel.ProcessMessage(cachedMessage.Message);
                 }
                 else
                 {
-                    m_CachedMessages.Enqueue(cachedMessage);
+                    s_CachedMessages.Enqueue(cachedMessage);
                 }
             }
-            RegisteredChannels.Add(channelId, sideChannel);
+            s_RegisteredChannels.Add(channelId, sideChannel);
         }
 
         /// <summary>
-        /// Unregisters a side channel from the communicator.
+        /// Unregister a side channel to stop sending and receiving messages. This method is
+        /// available for environments that have custom side channels. All built-in side
+        /// channels within the ML-Agents Toolkit are managed internally and do not need to
+        /// be explicitly registered/unregistered. Unregistering a side channel that has already
+        /// been unregistered (or never registered in the first place) has no negative side effects.
+        /// Note that unregistering a side channel may not stop the Python side
+        /// from sending messages, but it does mean that sent messages with not result in a call
+        /// to <see cref="SideChannel.OnMessageReceived(IncomingMessage)"/>. Furthermore,
+        /// those messages will not be buffered and will, in essence, be lost.
         /// </summary>
-        /// <param name="sideChannel"> The side channel to be unregistered.</param>
+        /// <param name="sideChannel">The side channel to unregister.</param>
         public static void UnregisterSideChannel(SideChannel sideChannel)
         {
-            if (RegisteredChannels.ContainsKey(sideChannel.ChannelId))
+            if (s_RegisteredChannels.ContainsKey(sideChannel.ChannelId))
             {
-                RegisteredChannels.Remove(sideChannel.ChannelId);
+                s_RegisteredChannels.Remove(sideChannel.ChannelId);
             }
         }
 
         /// <summary>
         /// Unregisters all the side channels from the communicator.
         /// </summary>
-        public static void UnregisterAllSideChannels()
+        internal static void UnregisterAllSideChannels()
         {
-            RegisteredChannels = new Dictionary<Guid, SideChannel>();
+            s_RegisteredChannels = new Dictionary<Guid, SideChannel>();
         }
 
         /// <summary>
@@ -83,9 +90,9 @@ namespace MLAgents.SideChannels
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetSideChannel<T>() where T: SideChannel
+        internal static T GetSideChannel<T>() where T: SideChannel
         {
-            foreach (var sc in RegisteredChannels.Values)
+            foreach (var sc in s_RegisteredChannels.Values)
             {
                 if (sc.GetType() == typeof(T))
                 {
@@ -96,33 +103,13 @@ namespace MLAgents.SideChannels
         }
 
         /// <summary>
-        /// Returns all SideChannels of Type T that are registered. Use <see cref="GetSideChannel{T}()"/> if possible,
-        /// as that does not make any memory allocations.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static List<T> GetSideChannels<T>() where T: SideChannel
-        {
-            var output = new List<T>();
-
-            foreach (var sc in RegisteredChannels.Values)
-            {
-                if (sc.GetType() == typeof(T))
-                {
-                    output.Add((T) sc);
-                }
-            }
-            return output;
-        }
-
-        /// <summary>
         /// Grabs the messages that the registered side channels will send to Python at the current step
         /// into a singe byte array.
         /// </summary>
         /// <returns></returns>
         internal static byte[] GetSideChannelMessage()
         {
-            return GetSideChannelMessage(RegisteredChannels);
+            return GetSideChannelMessage(s_RegisteredChannels);
         }
 
         /// <summary>
@@ -159,7 +146,7 @@ namespace MLAgents.SideChannels
         /// <param name="dataReceived">The byte array of data received from Python.</param>
         internal static void ProcessSideChannelData(byte[] dataReceived)
         {
-            ProcessSideChannelData(RegisteredChannels, dataReceived);
+            ProcessSideChannelData(s_RegisteredChannels, dataReceived);
         }
 
         /// <summary>
@@ -169,15 +156,12 @@ namespace MLAgents.SideChannels
         /// <param name="dataReceived">The byte array of data received from Python.</param>
         internal static void ProcessSideChannelData(Dictionary<Guid, SideChannel> sideChannels, byte[] dataReceived)
         {
-            while (m_CachedMessages.Count != 0)
+            while (s_CachedMessages.Count != 0)
             {
-                var cachedMessage = m_CachedMessages.Dequeue();
+                var cachedMessage = s_CachedMessages.Dequeue();
                 if (sideChannels.ContainsKey(cachedMessage.ChannelId))
                 {
-                    using (var incomingMsg = new IncomingMessage(cachedMessage.Message))
-                    {
-                        sideChannels[cachedMessage.ChannelId].OnMessageReceived(incomingMsg);
-                    }
+                    sideChannels[cachedMessage.ChannelId].ProcessMessage(cachedMessage.Message);
                 }
                 else
                 {
@@ -214,16 +198,13 @@ namespace MLAgents.SideChannels
                         }
                         if (sideChannels.ContainsKey(channelId))
                         {
-                            using (var incomingMsg = new IncomingMessage(message))
-                            {
-                                sideChannels[channelId].OnMessageReceived(incomingMsg);
-                            }
+                            sideChannels[channelId].ProcessMessage(message);
                         }
                         else
                         {
                             // Don't recognize this ID, but cache it in case the SideChannel that can handle
                             // it is registered before the next call to ProcessSideChannelData.
-                            m_CachedMessages.Enqueue(new CachedSideChannelMessage
+                            s_CachedMessages.Enqueue(new CachedSideChannelMessage
                             {
                                 ChannelId = channelId,
                                 Message = message
@@ -233,6 +214,5 @@ namespace MLAgents.SideChannels
                 }
             }
         }
-
     }
 }

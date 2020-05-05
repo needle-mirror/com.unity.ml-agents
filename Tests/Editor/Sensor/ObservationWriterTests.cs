@@ -1,17 +1,17 @@
 using NUnit.Framework;
-using MLAgents.Sensors;
-using Barracuda;
-using MLAgents.Inference;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Inference;
+using Unity.Barracuda;
 
 
-namespace MLAgents.Tests
+namespace Unity.MLAgents.Tests
 {
-    public class WriteAdapterTests
+    public class ObservationWriterTests
     {
         [Test]
         public void TestWritesToIList()
         {
-            WriteAdapter writer = new WriteAdapter();
+            ObservationWriter writer = new ObservationWriter();
             var buffer = new[] { 0f, 0f, 0f };
             var shape = new[] { 3 };
 
@@ -40,7 +40,7 @@ namespace MLAgents.Tests
         [Test]
         public void TestWritesToTensor()
         {
-            WriteAdapter writer = new WriteAdapter();
+            ObservationWriter writer = new ObservationWriter();
             var t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,
@@ -80,7 +80,7 @@ namespace MLAgents.Tests
         [Test]
         public void TestWritesToTensor3D()
         {
-            WriteAdapter writer = new WriteAdapter();
+            ObservationWriter writer = new ObservationWriter();
             var t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,

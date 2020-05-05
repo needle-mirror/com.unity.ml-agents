@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using MLAgents.Policies;
-using MLAgents.Sensors;
-using MLAgents.SideChannels;
+using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     internal struct CommunicatorInitParameters
     {
@@ -27,6 +26,11 @@ namespace MLAgents
         /// The version of the communication API.
         /// </summary>
         public string unityCommunicationVersion;
+
+        /// <summary>
+        /// The RL capabilities of the C# codebase.
+        /// </summary>
+        public UnityRLCapabilities CSharpCapabilities;
     }
     internal struct UnityRLInitParameters
     {
@@ -44,6 +48,11 @@ namespace MLAgents
         /// The version of the communication API that python is using.
         /// </summary>
         public string pythonCommunicationVersion;
+
+        /// <summary>
+        /// The RL capabilities of the Trainer codebase.
+        /// </summary>
+        public UnityRLCapabilities TrainerCapabilities;
     }
     internal struct UnityRLInputParameters
     {

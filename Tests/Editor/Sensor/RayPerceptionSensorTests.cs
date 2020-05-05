@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using MLAgents.Sensors;
+using Unity.MLAgents.Sensors;
 
-namespace MLAgents.Tests
+namespace Unity.MLAgents.Tests
 {
     public class RayPerceptionSensorTests
     {
@@ -84,7 +84,7 @@ namespace MLAgents.Tests
                 Assert.AreEqual(sensor.GetObservationShape()[0], expectedObs);
                 var outputBuffer = new float[expectedObs];
 
-                WriteAdapter writer = new WriteAdapter();
+                ObservationWriter writer = new ObservationWriter();
                 writer.SetTarget(outputBuffer, sensor.GetObservationShape(), 0);
 
                 var numWritten = sensor.Write(writer);
@@ -142,7 +142,7 @@ namespace MLAgents.Tests
             Assert.AreEqual(sensor.GetObservationShape()[0], expectedObs);
             var outputBuffer = new float[expectedObs];
 
-            WriteAdapter writer = new WriteAdapter();
+            ObservationWriter writer = new ObservationWriter();
             writer.SetTarget(outputBuffer, sensor.GetObservationShape(), 0);
 
             var numWritten = sensor.Write(writer);
@@ -190,7 +190,7 @@ namespace MLAgents.Tests
                 Assert.AreEqual(sensor.GetObservationShape()[0], expectedObs);
                 var outputBuffer = new float[expectedObs];
 
-                WriteAdapter writer = new WriteAdapter();
+                ObservationWriter writer = new ObservationWriter();
                 writer.SetTarget(outputBuffer, sensor.GetObservationShape(), 0);
 
                 var numWritten = sensor.Write(writer);
@@ -237,7 +237,7 @@ namespace MLAgents.Tests
                 Assert.AreEqual(sensor.GetObservationShape()[0], expectedObs);
                 var outputBuffer = new float[expectedObs];
 
-                WriteAdapter writer = new WriteAdapter();
+                ObservationWriter writer = new ObservationWriter();
                 writer.SetTarget(outputBuffer, sensor.GetObservationShape(), 0);
 
                 var numWritten = sensor.Write(writer);
@@ -285,7 +285,7 @@ namespace MLAgents.Tests
                 Assert.AreEqual(sensor.GetObservationShape()[0], expectedObs);
                 var outputBuffer = new float[expectedObs];
 
-                WriteAdapter writer = new WriteAdapter();
+                ObservationWriter writer = new ObservationWriter();
                 writer.SetTarget(outputBuffer, sensor.GetObservationShape(), 0);
 
                 var numWritten = sensor.Write(writer);

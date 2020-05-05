@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using UnityEngine;
 using UnityEditor;
-using Barracuda;
-using MLAgents.Inference;
-using MLAgents.Sensors;
+using Unity.MLAgents.Inference;
+using Unity.MLAgents.Sensors;
+using Unity.Barracuda;
 using System.Linq;
-using MLAgents.Policies;
+using Unity.MLAgents.Policies;
 
-namespace MLAgents.Tests
+namespace Unity.MLAgents.Tests
 {
     public class Test3DSensorComponent : SensorComponent
     {
@@ -40,14 +40,14 @@ namespace MLAgents.Tests
 
         public int[] GetObservationShape()
         {
-            return new int[] {m_Height, m_Width, m_Channels };
+            return new [] {m_Height, m_Width, m_Channels };
         }
 
-        public int Write(WriteAdapter adapter)
+        public int Write(ObservationWriter writer)
         {
             for (int i = 0; i < m_Width * m_Height * m_Channels; i++)
             {
-                adapter[i] = 0.0f;
+                writer[i] = 0.0f;
             }
             return m_Width * m_Height * m_Channels;
         }
@@ -74,28 +74,28 @@ namespace MLAgents.Tests
     [TestFixture]
     public class ParameterLoaderTest
     {
-        const string k_continuous2vis8vec2actionPath = "Packages/com.unity.ml-agents/Tests/Editor/Resources/continuous2vis8vec2action.nn";
-        const string k_discrete1vis0vec_2_3action_recurrModelPath = "Packages/com.unity.ml-agents/Tests/Editor/Resources/discrete1vis0vec_2_3action_recurr.nn";
+        const string k_continuous2vis8vec2actionPath = "Packages/com.unity.ml-agents/Tests/Editor/TestModels/continuous2vis8vec2action.nn";
+        const string k_discrete1vis0vec_2_3action_recurrModelPath = "Packages/com.unity.ml-agents/Tests/Editor/TestModels/discrete1vis0vec_2_3action_recurr.nn";
         NNModel continuous2vis8vec2actionModel;
         NNModel discrete1vis0vec_2_3action_recurrModel;
         Test3DSensorComponent sensor_21_20_3;
         Test3DSensorComponent sensor_20_22_3;
 
-        private BrainParameters GetContinuous2vis8vec2actionBrainParameters()
+        BrainParameters GetContinuous2vis8vec2actionBrainParameters()
         {
             var validBrainParameters = new BrainParameters();
             validBrainParameters.VectorObservationSize = 8;
-            validBrainParameters.VectorActionSize = new int[] { 2 };
+            validBrainParameters.VectorActionSize = new [] { 2 };
             validBrainParameters.NumStackedVectorObservations = 1;
             validBrainParameters.VectorActionSpaceType = SpaceType.Continuous;
             return validBrainParameters;
         }
 
-        private BrainParameters GetDiscrete1vis0vec_2_3action_recurrModelBrainParameters()
+        BrainParameters GetDiscrete1vis0vec_2_3action_recurrModelBrainParameters()
         {
             var validBrainParameters = new BrainParameters();
             validBrainParameters.VectorObservationSize = 0;
-            validBrainParameters.VectorActionSize = new int[] { 2, 3 };
+            validBrainParameters.VectorActionSize = new [] { 2, 3 };
             validBrainParameters.NumStackedVectorObservations = 1;
             validBrainParameters.VectorActionSpaceType = SpaceType.Discrete;
             return validBrainParameters;
@@ -224,7 +224,7 @@ namespace MLAgents.Tests
             var model = ModelLoader.Load(continuous2vis8vec2actionModel);
 
             var brainParameters = GetContinuous2vis8vec2actionBrainParameters();
-            brainParameters.VectorActionSize = new int[] { 3 }; // Invalid action
+            brainParameters.VectorActionSize = new [] { 3 }; // Invalid action
             var errors = BarracudaModelParamLoader.CheckModel(model, brainParameters, new SensorComponent[] { sensor_21_20_3, sensor_20_22_3 });
             Assert.Greater(errors.Count(), 0);
 
@@ -240,7 +240,7 @@ namespace MLAgents.Tests
             var model = ModelLoader.Load(discrete1vis0vec_2_3action_recurrModel);
 
             var brainParameters = GetDiscrete1vis0vec_2_3action_recurrModelBrainParameters();
-            brainParameters.VectorActionSize = new int[] { 3, 3 }; // Invalid action
+            brainParameters.VectorActionSize = new [] { 3, 3 }; // Invalid action
             var errors = BarracudaModelParamLoader.CheckModel(model, brainParameters, new SensorComponent[] { sensor_21_20_3 });
             Assert.Greater(errors.Count(), 0);
 

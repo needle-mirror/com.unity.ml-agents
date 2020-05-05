@@ -4,10 +4,10 @@ using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using MLAgents.Inference;
-using MLAgents.Policies;
-using MLAgents.SideChannels;
-using Barracuda;
+using Unity.MLAgents.Inference;
+using Unity.MLAgents.Policies;
+using Unity.MLAgents.SideChannels;
+using Unity.Barracuda;
 
 /**
  * Welcome to Unity Machine Learning Agents (ML-Agents).
@@ -19,10 +19,10 @@ using Barracuda;
  * API. For more information on each of these entities, in addition to how to
  * set-up a learning environment and train the behavior of characters in a
  * Unity scene, please browse our documentation pages on GitHub:
- * https://github.com/Unity-Technologies/ml-agents/blob/0.15.1/docs/
+ * https://github.com/Unity-Technologies/ml-agents/tree/release_1_docs/docs/
  */
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     /// <summary>
     /// Helper class to step the Academy during FixedUpdate phase.
@@ -45,34 +45,34 @@ namespace MLAgents
     ///
     /// At initialization, the Academy attempts to connect to the Python training process through
     /// the external communicator. If successful, the training process can train <see cref="Agent"/>
-    /// instances. When you set an agent's <see cref="BehaviorParameters.behaviorType"/> setting
+    /// instances. When you set an agent's <see cref="BehaviorParameters.BehaviorType"/> setting
     /// to <see cref="BehaviorType.Default"/>, the agent exchanges data with the training process
     /// to make decisions. If no training process is available, agents with the default behavior
     /// fall back to inference or heuristic decisions. (You can also set agents to always use
     /// inference or heuristics.)
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/master/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/tree/release_1_docs/" +
         "docs/Learning-Environment-Design.md")]
     public class Academy : IDisposable
     {
         /// <summary>
         /// Communication protocol version.
-        /// When connecting to python, this must match UnityEnvironment.API_VERSION.
-        /// Currently we require strict equality between the communication protocol
-        /// on each side, although we may allow some flexibility in the future.
-        /// This should be incremented whenever a change is made to the communication protocol.
+        /// When connecting to python, this must be compatible with UnityEnvironment.API_VERSION.
+        /// We follow semantic versioning on the communication version, so existing
+        /// functionality will work as long the major versions match.
+        /// This should be changed whenever a change is made to the communication protocol.
         /// </summary>
-        const string k_ApiVersion = "0.16.0";
+        const string k_ApiVersion = "1.0.0";
 
         /// <summary>
         /// Unity package version of com.unity.ml-agents.
         /// This must match the version string in package.json and is checked in a unit test.
         /// </summary>
-        internal const string k_PackageVersion = "0.16.0-preview";
+        internal const string k_PackageVersion = "1.0.0-preview";
 
         const int k_EditorTrainingPort = 5004;
 
-        const string k_portCommandLineFlag = "--mlagents-port";
+        const string k_PortCommandLineFlag = "--mlagents-port";
 
         // Lazy initializer pattern, see https://csharpindepth.com/articles/singleton#lazy
         static Lazy<Academy> s_Lazy = new Lazy<Academy>(() => new Academy());
@@ -140,6 +140,12 @@ namespace MLAgents
         {
             set { m_InferenceSeed = value; }
         }
+
+        /// <summary>
+        /// Returns the RLCapabilities of the python client that the unity process is connected to.
+        /// </summary>
+        internal UnityRLCapabilities TrainerCapabilities { get; set; }
+
 
         // The Academy uses a series of events to communicate with agents
         // to facilitate synchronization. More specifically, it ensures
@@ -288,7 +294,7 @@ namespace MLAgents
             var inputPort = "";
             for (var i = 0; i < args.Length; i++)
             {
-                if (args[i] == k_portCommandLineFlag)
+                if (args[i] == k_PortCommandLineFlag)
                 {
                     inputPort = args[i + 1];
                 }
@@ -311,6 +317,31 @@ namespace MLAgents
             }
         }
 
+        EnvironmentParameters m_EnvironmentParameters;
+        StatsRecorder m_StatsRecorder;
+
+        /// <summary>
+        /// Returns the <see cref="EnvironmentParameters"/> instance. If training
+        /// features such as Curriculum Learning or Environment Parameter Randomization are used,
+        /// then the values of the parameters generated from the training process can be
+        /// retrieved here.
+        /// </summary>
+        /// <returns></returns>
+        public EnvironmentParameters EnvironmentParameters
+        {
+            get { return m_EnvironmentParameters; }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="StatsRecorder"/> instance. This instance can be used
+        /// to record any statistics from the Unity environment.
+        /// </summary>
+        /// <returns></returns>
+        public StatsRecorder StatsRecorder
+        {
+            get { return m_StatsRecorder; }
+        }
+
         /// <summary>
         /// Initializes the environment, configures it and initializes the Academy.
         /// </summary>
@@ -321,9 +352,9 @@ namespace MLAgents
 
             EnableAutomaticStepping();
 
-            SideChannelUtils.RegisterSideChannel(new EngineConfigurationChannel());
-            SideChannelUtils.RegisterSideChannel(new FloatPropertiesChannel());
-            SideChannelUtils.RegisterSideChannel(new StatsSideChannel());
+            SideChannelsManager.RegisterSideChannel(new EngineConfigurationChannel());
+            m_EnvironmentParameters = new EnvironmentParameters();
+            m_StatsRecorder = new StatsRecorder();
 
             // Try to launch the communicator by using the arguments passed at launch
             var port = ReadPortFromArgs();
@@ -350,10 +381,13 @@ namespace MLAgents
                             unityCommunicationVersion = k_ApiVersion,
                             unityPackageVersion = k_PackageVersion,
                             name = "AcademySingleton",
+                            CSharpCapabilities = new UnityRLCapabilities()
                         });
                     UnityEngine.Random.InitState(unityRlInitParameters.seed);
                     // We might have inference-only Agents, so set the seed for them too.
                     m_InferenceSeed = unityRlInitParameters.seed;
+                    TrainerCapabilities = unityRlInitParameters.TrainerCapabilities;
+                    TrainerCapabilities.WarnOnPythonMissingBaseRLCapabilities();
                 }
                 catch
                 {
@@ -477,7 +511,7 @@ namespace MLAgents
             // If the communicator is not on, we need to clear the SideChannel sending queue
             if (!IsCommunicatorOn)
             {
-                SideChannelUtils.GetSideChannelMessage();
+                SideChannelsManager.GetSideChannelMessage();
             }
 
             using (TimerStack.Instance.Scoped("AgentAct"))
@@ -531,7 +565,10 @@ namespace MLAgents
 
             Communicator?.Dispose();
             Communicator = null;
-            SideChannelUtils.UnregisterAllSideChannels();
+
+            m_EnvironmentParameters.Dispose();
+            m_StatsRecorder.Dispose();
+            SideChannelsManager.UnregisterAllSideChannels();  // unregister custom side channels
 
             if (m_ModelRunners != null)
             {
