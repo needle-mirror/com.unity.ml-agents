@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-preview] - 2020-05-19
+### Bug Fixes
+#### com.unity.ml-agents (C#)
+- A bug that would cause the editor to go into a loop when a prefab was selected was fixed. (#3949)
+- BrainParameters.ToProto() no longer throws an exception if none of the fields have been set. (#3930)
+- The Barracuda dependency was upgraded to 0.7.1-preview. (#3977)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+- An issue was fixed where using `--initialize-from` would resume from the past step count. (#3962)
+- The gym wrapper error for the wrong number of agents now fires more consistently, and more details
+  were added to the error message when the input dimension is wrong. (#3963)
+
 ## [1.0.0-preview] - 2020-05-06
 
 ### Major Changes
@@ -23,15 +34,15 @@ and this project adheres to
   communication between Unity and the Python process. (#3760)
 - The obsolete `Agent` methods `GiveModel`, `Done`, `InitializeAgent`,
   `AgentAction` and `AgentReset` have been removed. (#3770)
-- The SideChannel API has changed (#3833, #3660) :
+- The SideChannel API has changed:
   - Introduced the `SideChannelManager` to register, unregister and access side
-    channels.
+    channels. (#3807)
   - `Academy.FloatProperties` was replaced by `Academy.EnvironmentParameters`.
-    See the [Migration Guide](../docs/Migrating.md) for more details on
-    upgrading.
+    See the [Migration Guide](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Migrating.md)
+    for more details on upgrading. (#3807)
   - `SideChannel.OnMessageReceived` is now a protected method (was public)
   - SideChannel IncomingMessages methods now take an optional default argument,
-    which is used when trying to read more data than the message contains.
+    which is used when trying to read more data than the message contains. (#3751)
   - Added a feature to allow sending stats from C# environments to TensorBoard
     (and other python StatsWriters). To do this from your code, use
     `Academy.Instance.StatsRecorder.Add(key, value)`. (#3660)
@@ -46,19 +57,20 @@ and this project adheres to
 - `WriteAdapter` was renamed to `ObservationWriter`. If you have a custom
   `ISensor` implementation, you will need to change the signature of its
   `Write()` method. (#3834)
-- Updated to Barracuda 0.7.0-preivew which has breaking namespace and assembly
-  name changes. (#3875)
+- The Barracuda dependency was upgraded to 0.7.0-preview (which has breaking
+  namespace and assembly name changes). (#3875)
 
 #### ml-agents / ml-agents-envs / gym-unity (Python)
 
 - The `--load` and `--train` command-line flags have been deprecated. Training
-  now happens by default, and use `--resume` to resume training instead. (#3705)
+  now happens by default, and use `--resume` to resume training instead of
+  `--load`. (#3705)
 - The Jupyter notebooks have been removed from the repository. (#3704)
-- Removed the multi-agent gym option from the gym wrapper. For multi-agent
-  scenarios, use the [Low Level Python API](../docs/Python-API.md). (#3681)
+- The multi-agent gym option was removed from the gym wrapper. For multi-agent
+  scenarios, use the [Low Level Python API](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Python-API.md). (#3681)
 - The low level Python API has changed. You can look at the document
-  [Low Level Python API documentation](../docs/Python-API.md) for more
-  information. If you use `mlagents-learn` for training, this should be a
+  [Low Level Python API](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Python-API.md)
+  documentation for more information. If you use `mlagents-learn` for training, this should be a
   transparent change. (#3681)
 - Added ability to start training (initialize model weights) from a previous run
   ID. (#3710)
@@ -80,7 +92,7 @@ and this project adheres to
 - Academy.InferenceSeed property was added. This is used to initialize the
   random number generator in ModelRunner, and is incremented for each
   ModelRunner. (#3823)
-- Added `Agent.GetObservations()`, which returns a read-only view of the
+- `Agent.GetObservations()` was added, which returns a read-only view of the
   observations added in `CollectObservations()`. (#3825)
 - `UnityRLCapabilities` was added to help inform users when RL features are
   mismatched between C# and Python packages. (#3831)
@@ -118,7 +130,7 @@ and this project adheres to
 
 #### ml-agents / ml-agents-envs / gym-unity (Python)
 
-- Fixed an issue where exceptions from environments provided a returncode of 0.
+- Fixed an issue where exceptions from environments provided a return code of 0.
   (#3680)
 - Self-Play team changes will now trigger a full environment reset. This
   prevents trajectories in progress during a team change from getting into the
