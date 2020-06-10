@@ -68,7 +68,7 @@ namespace Unity.MLAgents
         /// Unity package version of com.unity.ml-agents.
         /// This must match the version string in package.json and is checked in a unit test.
         /// </summary>
-        internal const string k_PackageVersion = "1.0.2";
+        internal const string k_PackageVersion = "1.1.0-preview";
 
         const int k_EditorTrainingPort = 5004;
 
@@ -397,12 +397,11 @@ namespace Unity.MLAgents
                     );
                     Communicator = null;
                 }
-
-                if (Communicator != null)
-                {
-                    Communicator.QuitCommandReceived += OnQuitCommandReceived;
-                    Communicator.ResetCommandReceived += OnResetCommand;
-                }
+            }
+            if (Communicator != null)
+            {
+                Communicator.QuitCommandReceived += OnQuitCommandReceived;
+                Communicator.ResetCommandReceived += OnResetCommand;
             }
 
             // If a communicator is enabled/provided, then we assume we are in

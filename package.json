@@ -1,18 +1,18 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "1.0.2",
+  "version": "1.1.0-preview",
   "unity": "2018.4",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
-    "com.unity.barracuda": "1.0.0"
+    "com.unity.barracuda": "0.7.1-preview"
   },
   "upmCi": {
-    "footprint": "0e043f43cb2a6eb809962f9191f098730f0338db"
+    "footprint": "f254c0975eceda489174c37c8799ed3cb0ddc2b4"
   },
   "repository": {
     "url": "https://github.com/Unity-Technologies/ml-agents.git",
     "type": "git",
-    "revision": "432e69a4ffba2ad5fa2463fba5d5fa17e88a5825"
+    "revision": "dc43c8de7e8d489766918991ac9da4813057361d"
   }
 }
