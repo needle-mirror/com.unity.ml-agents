@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2020-07-07
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Update Barracuda to 1.0.1. (#4187)
+### Bug Fixes
+#### com.unity.ml-agents (C#)
+- Fixed an issue where RayPerceptionSensor would raise an exception when the
+list of tags was empty, or a tag in the list was invalid (unknown, null, or
+empty string). (#4155)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+- Fixed issue with FoodCollector, Soccer, and WallJump when playing with keyboard. (#4147, #4174)
+
 ## [1.0.2] - 2020-06-04
 ### Minor Changes
 #### com.unity.ml-agents (C#)
