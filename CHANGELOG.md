@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+
+## [1.5.0-preview] - 2020-10-14
+### Major Changes
+#### com.unity.ml-agents (C#)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+ - Added the Random Network Distillation (RND) intrinsic reward signal to the Pytorch
+ trainers. To use RND, add a `rnd` section to the `reward_signals` section of your
+ yaml configuration file. [More information here](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-Configuration-File.md#rnd-intrinsic-reward) (#4473)
+### Minor Changes
+#### com.unity.ml-agents (C#)
+ - Stacking for compressed observations is now supported. An additional setting
+ option `Observation Stacks` is added in editor to sensor components that support
+ compressed observations. A new class `ISparseChannelSensor` with an
+ additional method `GetCompressedChannelMapping()`is added to generate a mapping
+ of the channels in compressed data to the actual channel after decompression,
+ for the python side to decompress correctly. (#4476)
+ - Added a new visual 3DBall environment. (#4513)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+ - The Communication API was changed to 1.2.0 to indicate support for stacked
+ compressed observation. A new entry `compressed_channel_mapping` is added to the
+ proto to handle decompression correctly. Newer versions of the package that wish to
+ make use of this will also need a compatible version of the Python trainers. (#4476)
+ - In the `VisualFoodCollector` scene, a vector flag representing the frozen state of
+ the agent is added to the input observations in addition to the original first-person
+ camera frame. The scene is able to train with the provided default config file. (#4511)
+ - Added conversion to string for sampler classes to increase the verbosity of
+ the curriculum lesson changes. The lesson updates would now output the sampler
+ stats in addition to the lesson and parameter name to the console.  (#4484)
+ - Localized documentation in Russian is added. Thanks to @SergeyMatrosov for
+ the contribution. (#4529)
+### Bug Fixes
+#### com.unity.ml-agents (C#)
+ - Fixed a bug where accessing the Academy outside of play mode would cause the
+ Academy to get stepped multiple times when in play mode. (#4532)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+
+
 ## [1.4.0-preview] - 2020-09-16
 ### Major Changes
 #### com.unity.ml-agents (C#)
@@ -49,10 +86,13 @@ your trainer configuration to do so. (#4448)
 #### com.unity.ml-agents (C#)
 - Previously, `com.unity.ml-agents` was not declaring built-in packages as
 dependencies in its package.json. The relevant dependencies are now listed. (#4384)
+- Agents no longer try to send observations when they become disabled if the
+Academy has been shut down. (#4489)
 #### ml-agents / ml-agents-envs / gym-unity (Python)
 - Fixed the sample code in the custom SideChannel example. (#4466)
 - A bug in the observation normalizer that would cause rewards to decrease
 when using `--resume` was fixed. (#4463)
+- Fixed a bug in exporting Pytorch models when using multiple discrete actions. (#4491)
 
 ## [1.3.0-preview] - 2020-08-12
 
