@@ -6,7 +6,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.0.5] - 2020-09-2
+
+## [1.0.6] - 2020-11-13
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Update documentation with recommended version of Python trainer. (#4535)
+- Log a warning if a version of the Python trainer is used that is newer than expected. (#4535)
+- Update Barracuda to 1.0.4. (#4644)
+
+### Bug Fixes
+#### com.unity.ml-agents (C#)
+- Fixed a bug with visual observations using .onnx model files and newer versions of Barracuda (1.1.0 or later). (#4533)
+- `Agent.CollectObservations()`, `Agent.EndEpisode()`, and `Academy.EnvironmentStep()` will now throw an exception
+if they are called recursively (for example, if they call `Agent.EndEpisode()`).
+Previously, this would result in an infinite loop and cause the editor to hang. (#4638)
+- Fixed a bug where accessing the Academy outside of play mode would cause the Academy to get stepped multiple times when in play mode. (#4637)
+
+## [1.0.5] - 2020-09-23
 ### Minor Changes
 #### com.unity.ml-agents (C#)
 - Update Barracuda to 1.0.3. (#4506)

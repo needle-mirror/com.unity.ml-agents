@@ -8,6 +8,80 @@ namespace Unity.MLAgents.Tests
 {
     public class TensorUtilsTest
     {
+        [TestCase(4, TestName = "TestResizeTensor_4D")]
+        [TestCase(8, TestName = "TestResizeTensor_8D")]
+        public void TestResizeTensor(int dimension)
+        {
+            if (dimension == 8)
+            {
+                // Barracuda 1.0.x doesn't support 8D tensors
+                // Barracuda 1.1.x does but it initially broke ML-Agents support
+                // Unfortunately, the PackageInfo methods don't exist in earlier versions of the editor,
+                // so just skip that variant of the test then.
+                // It's unlikely, but possible that we'll upgrade to a newer dependency of Barracuda,
+                // in which case we should make sure this test is run then.
+#if UNITY_2019_3_OR_NEWER
+                var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(Tensor).Assembly);
+                Assert.AreEqual("com.unity.barracuda", packageInfo.name);
+                var barracuda8DSupport = new Version(1, 1, 0);
+                var strippedBarracudaVersion = packageInfo.version.Replace("-preview", "");
+                var version = new Version(strippedBarracudaVersion);
+                if (version <= barracuda8DSupport)
+                {
+                    return;
+                }
+#else
+                return;
+#endif
+            }
+            var alloc = new TensorCachingAllocator();
+            var height = 64;
+            var width = 84;
+            var channels = 3;
+
+            // Set shape to {1, ..., height, width, channels}
+            // For 8D, the ... are all 1's
+            var shape = new long[dimension];
+            for (var i = 0; i < dimension; i++)
+            {
+                shape[i] = 1;
+            }
+
+            shape[dimension - 3] = height;
+            shape[dimension - 2] = width;
+            shape[dimension - 1] = channels;
+
+            var intShape = new int[dimension];
+            for (var i = 0; i < dimension; i++)
+            {
+                intShape[i] = (int)shape[i];
+            }
+
+            var tensorProxy = new TensorProxy
+            {
+                valueType = TensorProxy.TensorType.Integer,
+                data = new Tensor(intShape),
+                shape = shape,
+            };
+
+            // These should be invariant after the resize.
+            Assert.AreEqual(height, tensorProxy.data.shape.height);
+            Assert.AreEqual(width, tensorProxy.data.shape.width);
+            Assert.AreEqual(channels, tensorProxy.data.shape.channels);
+
+            TensorUtils.ResizeTensor(tensorProxy, 42, alloc);
+
+            Assert.AreEqual(height, tensorProxy.shape[dimension - 3]);
+            Assert.AreEqual(width, tensorProxy.shape[dimension - 2]);
+            Assert.AreEqual(channels, tensorProxy.shape[dimension - 1]);
+
+            Assert.AreEqual(height, tensorProxy.data.shape.height);
+            Assert.AreEqual(width, tensorProxy.data.shape.width);
+            Assert.AreEqual(channels, tensorProxy.data.shape.channels);
+
+            alloc.Dispose();
+        }
+
         [Test]
         public void RandomNormalTestTensorInt()
         {
