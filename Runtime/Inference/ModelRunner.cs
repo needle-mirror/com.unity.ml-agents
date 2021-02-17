@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Barracuda;
 using UnityEngine.Profiling;
@@ -24,12 +25,14 @@ namespace Unity.MLAgents.Inference
         TensorApplier m_TensorApplier;
 
         NNModel m_Model;
+        string m_ModelName;
         InferenceDevice m_InferenceDevice;
         IWorker m_Engine;
         bool m_Verbose = false;
         string[] m_OutputNames;
         IReadOnlyList<TensorProxy> m_InferenceInputs;
-        IReadOnlyList<TensorProxy> m_InferenceOutputs;
+        List<TensorProxy> m_InferenceOutputs;
+        Dictionary<string, Tensor> m_InputsByName;
         Dictionary<int, List<float>> m_Memories = new Dictionary<int, List<float>>();
 
         SensorShapeValidator m_SensorShapeValidator = new SensorShapeValidator();
@@ -51,11 +54,12 @@ namespace Unity.MLAgents.Inference
         public ModelRunner(
             NNModel model,
             ActionSpec actionSpec,
-            InferenceDevice inferenceDevice = InferenceDevice.CPU,
+            InferenceDevice inferenceDevice,
             int seed = 0)
         {
             Model barracudaModel;
             m_Model = model;
+            m_ModelName = model.name;
             m_InferenceDevice = inferenceDevice;
             m_TensorAllocator = new TensorCachingAllocator();
             if (model != null)
@@ -67,9 +71,22 @@ namespace Unity.MLAgents.Inference
                 D.logEnabled = m_Verbose;
 
                 barracudaModel = ModelLoader.Load(model);
-                var executionDevice = inferenceDevice == InferenceDevice.GPU
-                    ? WorkerFactory.Type.ComputePrecompiled
-                    : WorkerFactory.Type.CSharp;
+                WorkerFactory.Type executionDevice;
+                switch (inferenceDevice)
+                {
+                    case InferenceDevice.CPU:
+                        executionDevice = WorkerFactory.Type.CSharp;
+                        break;
+                    case InferenceDevice.GPU:
+                        executionDevice = WorkerFactory.Type.ComputePrecompiled;
+                        break;
+                    case InferenceDevice.Burst:
+                        executionDevice = WorkerFactory.Type.CSharpBurst;
+                        break;
+                    default:
+                        executionDevice = WorkerFactory.Type.CSharpBurst;
+                        break;
+                }
                 m_Engine = WorkerFactory.CreateWorker(executionDevice, barracudaModel, m_Verbose);
             }
             else
@@ -84,6 +101,8 @@ namespace Unity.MLAgents.Inference
                 seed, m_TensorAllocator, m_Memories, barracudaModel);
             m_TensorApplier = new TensorApplier(
                 actionSpec, seed, m_TensorAllocator, m_Memories, barracudaModel);
+            m_InputsByName = new Dictionary<string, Tensor>();
+            m_InferenceOutputs = new List<TensorProxy>();
         }
 
         public InferenceDevice InferenceDevice
@@ -96,15 +115,14 @@ namespace Unity.MLAgents.Inference
             get { return m_Model; }
         }
 
-        static Dictionary<string, Tensor> PrepareBarracudaInputs(IEnumerable<TensorProxy> infInputs)
+        void PrepareBarracudaInputs(IReadOnlyList<TensorProxy> infInputs)
         {
-            var inputs = new Dictionary<string, Tensor>();
-            foreach (var inp in infInputs)
+            m_InputsByName.Clear();
+            for (var i = 0; i < infInputs.Count; i++)
             {
-                inputs[inp.name] = inp.data;
+                var inp = infInputs[i];
+                m_InputsByName[inp.name] = inp.data;
             }
-
-            return inputs;
         }
 
         public void Dispose()
@@ -114,16 +132,14 @@ namespace Unity.MLAgents.Inference
             m_TensorAllocator?.Reset(false);
         }
 
-        List<TensorProxy> FetchBarracudaOutputs(string[] names)
+        void FetchBarracudaOutputs(string[] names)
         {
-            var outputs = new List<TensorProxy>();
+            m_InferenceOutputs.Clear();
             foreach (var n in names)
             {
                 var output = m_Engine.PeekOutput(n);
-                outputs.Add(TensorUtils.TensorProxyFromBarracuda(output, n));
+                m_InferenceOutputs.Add(TensorUtils.TensorProxyFromBarracuda(output, n));
             }
-
-            return outputs;
         }
 
         public void PutObservations(AgentInfo info, List<ISensor> sensors)
@@ -169,31 +185,33 @@ namespace Unity.MLAgents.Inference
             }
 
             Profiler.BeginSample("ModelRunner.DecideAction");
+            Profiler.BeginSample(m_ModelName);
 
-            Profiler.BeginSample($"MLAgents.{m_Model.name}.GenerateTensors");
+            Profiler.BeginSample($"GenerateTensors");
             // Prepare the input tensors to be feed into the engine
             m_TensorGenerator.GenerateTensors(m_InferenceInputs, currentBatchSize, m_Infos);
             Profiler.EndSample();
 
-            Profiler.BeginSample($"MLAgents.{m_Model.name}.PrepareBarracudaInputs");
-            var inputs = PrepareBarracudaInputs(m_InferenceInputs);
+            Profiler.BeginSample($"PrepareBarracudaInputs");
+            PrepareBarracudaInputs(m_InferenceInputs);
             Profiler.EndSample();
 
             // Execute the Model
-            Profiler.BeginSample($"MLAgents.{m_Model.name}.ExecuteGraph");
-            m_Engine.Execute(inputs);
+            Profiler.BeginSample($"ExecuteGraph");
+            m_Engine.Execute(m_InputsByName);
             Profiler.EndSample();
 
-            Profiler.BeginSample($"MLAgents.{m_Model.name}.FetchBarracudaOutputs");
-            m_InferenceOutputs = FetchBarracudaOutputs(m_OutputNames);
+            Profiler.BeginSample($"FetchBarracudaOutputs");
+            FetchBarracudaOutputs(m_OutputNames);
             Profiler.EndSample();
 
-            Profiler.BeginSample($"MLAgents.{m_Model.name}.ApplyTensors");
+            Profiler.BeginSample($"ApplyTensors");
             // Update the outputs
             m_TensorApplier.ApplyTensors(m_InferenceOutputs, m_OrderedAgentsRequestingDecisions, m_LastActionsReceived);
             Profiler.EndSample();
 
-            Profiler.EndSample();
+            Profiler.EndSample(); // end name
+            Profiler.EndSample(); // end ModelRunner.DecideAction
 
             m_Infos.Clear();
 
