@@ -88,7 +88,7 @@ namespace Unity.MLAgents.Sensors
             for (var i = 0; i < m_NumStackedObservations; i++)
             {
                 var obsIndex = (m_CurrentIndex + 1 + i) % m_NumStackedObservations;
-                writer.AddRange(m_StackedObservations[obsIndex], numWritten);
+                writer.AddList(m_StackedObservations[obsIndex], numWritten);
                 numWritten += m_UnstackedObservationSize;
             }
 
@@ -138,6 +138,12 @@ namespace Unity.MLAgents.Sensors
         {
             return SensorCompressionType.None;
         }
+
+        internal ISensor GetWrappedSensor()
+        {
+            return m_WrappedSensor;
+        }
+
 
         // TODO support stacked compressed observations (byte stream)
     }

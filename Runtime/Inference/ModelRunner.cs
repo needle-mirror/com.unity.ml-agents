@@ -28,7 +28,8 @@ namespace Unity.MLAgents.Inference
         bool m_Verbose = false;
         string[] m_OutputNames;
         IReadOnlyList<TensorProxy> m_InferenceInputs;
-        IReadOnlyList<TensorProxy> m_InferenceOutputs;
+        List<TensorProxy> m_InferenceOutputs;
+        Dictionary<string, Tensor> m_InputsByName;
         Dictionary<int, List<float>> m_Memories = new Dictionary<int, List<float>>();
 
         SensorShapeValidator m_SensorShapeValidator = new SensorShapeValidator();
@@ -84,17 +85,28 @@ namespace Unity.MLAgents.Inference
                 seed, m_TensorAllocator, m_Memories, barracudaModel);
             m_TensorApplier = new TensorApplier(
                 brainParameters, seed, m_TensorAllocator, m_Memories, barracudaModel);
+            m_InputsByName = new Dictionary<string, Tensor>();
+            m_InferenceOutputs = new List<TensorProxy>();
         }
 
-        static Dictionary<string, Tensor> PrepareBarracudaInputs(IEnumerable<TensorProxy> infInputs)
+        public InferenceDevice InferenceDevice
         {
-            var inputs = new Dictionary<string, Tensor>();
-            foreach (var inp in infInputs)
-            {
-                inputs[inp.name] = inp.data;
-            }
+            get { return m_InferenceDevice; }
+        }
 
-            return inputs;
+        public NNModel Model
+        {
+            get { return m_Model; }
+        }
+
+        void PrepareBarracudaInputs(IReadOnlyList<TensorProxy> infInputs)
+        {
+            m_InputsByName.Clear();
+            for (var i = 0; i < infInputs.Count; i++)
+            {
+                var inp = infInputs[i];
+                m_InputsByName[inp.name] = inp.data;
+            }
         }
 
         public void Dispose()
@@ -104,16 +116,14 @@ namespace Unity.MLAgents.Inference
             m_TensorAllocator?.Reset(false);
         }
 
-        List<TensorProxy> FetchBarracudaOutputs(string[] names)
+        void FetchBarracudaOutputs(string[] names)
         {
-            var outputs = new List<TensorProxy>();
+            m_InferenceOutputs.Clear();
             foreach (var n in names)
             {
                 var output = m_Engine.PeekOutput(n);
-                outputs.Add(TensorUtils.TensorProxyFromBarracuda(output, n));
+                m_InferenceOutputs.Add(TensorUtils.TensorProxyFromBarracuda(output, n));
             }
-
-            return outputs;
         }
 
         public void PutObservations(AgentInfo info, List<ISensor> sensors)
@@ -166,16 +176,16 @@ namespace Unity.MLAgents.Inference
             Profiler.EndSample();
 
             Profiler.BeginSample($"MLAgents.{m_Model.name}.PrepareBarracudaInputs");
-            var inputs = PrepareBarracudaInputs(m_InferenceInputs);
+            PrepareBarracudaInputs(m_InferenceInputs);
             Profiler.EndSample();
 
             // Execute the Model
             Profiler.BeginSample($"MLAgents.{m_Model.name}.ExecuteGraph");
-            m_Engine.Execute(inputs);
+            m_Engine.Execute(m_InputsByName);
             Profiler.EndSample();
 
             Profiler.BeginSample($"MLAgents.{m_Model.name}.FetchBarracudaOutputs");
-            m_InferenceOutputs = FetchBarracudaOutputs(m_OutputNames);
+            FetchBarracudaOutputs(m_OutputNames);
             Profiler.EndSample();
 
             Profiler.BeginSample($"MLAgents.{m_Model.name}.ApplyTensors");
