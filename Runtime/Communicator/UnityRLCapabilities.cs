@@ -9,6 +9,8 @@ namespace Unity.MLAgents
         public bool CompressedChannelMapping;
         public bool HybridActions;
         public bool TrainingAnalytics;
+        public bool VariableLengthObservation;
+        public bool MultiAgentGroups;
 
         /// <summary>
         /// A class holding the capabilities flags for Reinforcement Learning across C# and the Trainer codebase.  This
@@ -19,13 +21,17 @@ namespace Unity.MLAgents
             bool concatenatedPngObservations = true,
             bool compressedChannelMapping = true,
             bool hybridActions = true,
-            bool trainingAnalytics = true)
+            bool trainingAnalytics = true,
+            bool variableLengthObservation = true,
+            bool multiAgentGroups = true)
         {
             BaseRLCapabilities = baseRlCapabilities;
             ConcatenatedPngObservations = concatenatedPngObservations;
             CompressedChannelMapping = compressedChannelMapping;
             HybridActions = hybridActions;
             TrainingAnalytics = trainingAnalytics;
+            VariableLengthObservation = variableLengthObservation;
+            MultiAgentGroups = multiAgentGroups;
         }
 
         /// <summary>

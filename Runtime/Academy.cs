@@ -20,7 +20,7 @@ using Unity.Barracuda;
  * API. For more information on each of these entities, in addition to how to
  * set-up a learning environment and train the behavior of characters in a
  * Unity scene, please browse our documentation pages on GitHub:
- * https://github.com/Unity-Technologies/ml-agents/tree/release_14_docs/docs/
+ * https://github.com/Unity-Technologies/ml-agents/tree/release_15_docs/docs/
  */
 
 namespace Unity.MLAgents
@@ -61,7 +61,7 @@ namespace Unity.MLAgents
     /// fall back to inference or heuristic decisions. (You can also set agents to always use
     /// inference or heuristics.)
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/tree/release_14_docs/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/tree/release_15_docs/" +
         "docs/Learning-Environment-Design.md")]
     public class Academy : IDisposable
     {
@@ -95,15 +95,19 @@ namespace Unity.MLAgents
         ///         <term>1.4.0</term>
         ///         <description>Support training analytics sent from python trainer to the editor.</description>
         ///     </item>
+        ///     <item>
+        ///         <term>1.5.0</term>
+        ///         <description>Support variable length observation training and multi-agent groups.</description>
+        ///     </item>
         /// </list>
         /// </remarks>
-        const string k_ApiVersion = "1.4.0";
+        const string k_ApiVersion = "1.5.0";
 
         /// <summary>
         /// Unity package version of com.unity.ml-agents.
         /// This must match the version string in package.json and is checked in a unit test.
         /// </summary>
-        internal const string k_PackageVersion = "1.8.1-preview";
+        internal const string k_PackageVersion = "1.9.0-preview";
 
         const int k_EditorTrainingPort = 5004;
 
@@ -418,12 +422,7 @@ namespace Unity.MLAgents
             var port = ReadPortFromArgs();
             if (port > 0)
             {
-                Communicator = new RpcCommunicator(
-                    new CommunicatorInitParameters
-                    {
-                        port = port
-                    }
-                );
+                Communicator = CommunicatorFactory.Create();
             }
 
             if (Communicator != null)
@@ -434,6 +433,7 @@ namespace Unity.MLAgents
                 bool initSuccessful = false;
                 var communicatorInitParams = new CommunicatorInitParameters
                 {
+                    port = port,
                     unityCommunicationVersion = k_ApiVersion,
                     unityPackageVersion = k_PackageVersion,
                     name = "AcademySingleton",
