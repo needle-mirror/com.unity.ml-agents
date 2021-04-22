@@ -11,7 +11,7 @@ namespace Unity.MLAgents.Sensors
     {
 
         /// <summary>
-        /// Name of the generated <see cref="bufferSensor"/> object.
+        /// Name of the generated <see cref="BufferSensor"/> object.
         /// Note that changing this at runtime does not affect how the Agent sorts the sensors.
         /// </summary>
         public string SensorName
@@ -49,16 +49,10 @@ namespace Unity.MLAgents.Sensors
         private BufferSensor m_Sensor;
 
         /// <inheritdoc/>
-        public override ISensor CreateSensor()
+        public override ISensor[] CreateSensors()
         {
             m_Sensor = new BufferSensor(MaxNumObservables, ObservableSize, m_SensorName);
-            return m_Sensor;
-        }
-
-        /// <inheritdoc/>
-        public override int[] GetObservationShape()
-        {
-            return new[] { MaxNumObservables, ObservableSize };
+            return new ISensor[] { m_Sensor };
         }
 
         /// <summary>

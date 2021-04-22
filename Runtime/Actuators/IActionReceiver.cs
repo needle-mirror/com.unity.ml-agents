@@ -127,7 +127,11 @@ namespace Unity.MLAgents.Actuators
             return ContinuousActions.IsEmpty() && DiscreteActions.IsEmpty();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Indicates whether the current ActionBuffers is equal to another ActionBuffers.
+        /// </summary>
+        /// <param name="obj">An ActionBuffers to compare with this ActionBuffers.</param>
+        /// <returns>true if the current ActionBuffers is equal to the other parameter; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             if (!(obj is ActionBuffers))
@@ -140,53 +144,15 @@ namespace Unity.MLAgents.Actuators
                 ab.DiscreteActions.SequenceEqual(DiscreteActions);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Computes the hash code of the ActionBuffers.
+        /// </summary>
+        /// <returns>A hash code for the current ActionBuffers.</returns>
         public override int GetHashCode()
         {
             unchecked
             {
                 return (ContinuousActions.GetHashCode() * 397) ^ DiscreteActions.GetHashCode();
-            }
-        }
-
-        /// <summary>
-        /// Packs the continuous and discrete actions into one float array.  The array passed into this method
-        /// must have a Length that is greater than or equal to the sum of the Lengths of
-        /// <see cref="ContinuousActions"/> and <see cref="DiscreteActions"/>.
-        /// </summary>
-        /// <param name="destination">A float array to pack actions into whose length is greater than or
-        /// equal to the addition of the Lengths of this objects <see cref="ContinuousActions"/> and
-        /// <see cref="DiscreteActions"/> segments.</param>
-        [Obsolete("PackActions has been deprecated.")]
-        public void PackActions(in float[] destination)
-        {
-            Debug.Assert(destination.Length >= ContinuousActions.Length + DiscreteActions.Length,
-                $"argument '{nameof(destination)}' is not large enough to pack the actions into.\n" +
-                $"{nameof(destination)}.Length: {destination.Length}\n" +
-                $"{nameof(ContinuousActions)}.Length + {nameof(DiscreteActions)}.Length: {ContinuousActions.Length + DiscreteActions.Length}");
-
-            var start = 0;
-            if (ContinuousActions.Length > 0)
-            {
-                Array.Copy(ContinuousActions.Array,
-                    ContinuousActions.Offset,
-                    destination,
-                    start,
-                    ContinuousActions.Length);
-                start = ContinuousActions.Length;
-            }
-            if (start >= destination.Length)
-            {
-                return;
-            }
-
-            if (DiscreteActions.Length > 0)
-            {
-                Array.Copy(DiscreteActions.Array,
-                    DiscreteActions.Offset,
-                    destination,
-                    start,
-                    DiscreteActions.Length);
             }
         }
     }
@@ -214,11 +180,11 @@ namespace Unity.MLAgents.Actuators
         /// </param>
         /// <remarks>
         /// When using Discrete Control, you can prevent the Agent from using a certain
-        /// action by masking it with <see cref="IDiscreteActionMask.WriteMask"/>.
+        /// action by masking it with <see cref="IDiscreteActionMask.SetActionEnabled"/>.
         ///
         /// See [Agents - Actions] for more information on masking actions.
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <seealso cref="IActionReceiver.OnActionReceived"/>
         void WriteDiscreteActionMask(IDiscreteActionMask actionMask);

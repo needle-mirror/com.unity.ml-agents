@@ -87,9 +87,9 @@ namespace Unity.MLAgents
     internal class AgentVectorActuator : VectorActuator
     {
         public AgentVectorActuator(IActionReceiver actionReceiver,
-            IHeuristicProvider heuristicProvider,
-            ActionSpec actionSpec,
-            string name = "VectorActuator"
+                                   IHeuristicProvider heuristicProvider,
+                                   ActionSpec actionSpec,
+                                   string name = "VectorActuator"
         ) : base(actionReceiver, heuristicProvider, actionSpec, name)
         { }
 
@@ -185,13 +185,13 @@ namespace Unity.MLAgents
     /// [OnDisable()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnDisable.html]
     /// [OnBeforeSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnBeforeSerialize.html
     /// [OnAfterSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnAfterSerialize.html
-    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md
-    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design.md
+    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md
+    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design.md
     /// [Unity ML-Agents Toolkit]: https://github.com/Unity-Technologies/ml-agents
-    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Readme.md
+    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Readme.md
     ///
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/" +
         "docs/Learning-Environment-Design-Agents.md")]
     [Serializable]
     [RequireComponent(typeof(BehaviorParameters))]
@@ -301,9 +301,6 @@ namespace Unity.MLAgents
         /// Whether or not the Agent has been initialized already
         bool m_Initialized;
 
-        /// Keeps track of the actions that are masked at each step.
-        DiscreteActionMasker m_ActionMasker;
-
         /// <summary>
         /// Set of DemonstrationWriters that the Agent will write its step information to.
         /// If you use a DemonstrationRecorder component, this will automatically register its DemonstrationWriter.
@@ -337,17 +334,6 @@ namespace Unity.MLAgents
         /// with the current behavior of Agent.
         /// </summary>
         IActuator m_VectorActuator;
-
-        /// <summary>
-        /// This is used to avoid allocation of a float array every frame if users are still using the old
-        /// OnActionReceived method.
-        /// </summary>
-        float[] m_LegacyActionCache;
-
-        /// <summary>
-        /// This is used to avoid allocation of a float array during legacy calls to Heuristic.
-        /// </summary>
-        float[] m_LegacyHeuristicCache;
 
         /// Currect MultiAgentGroup ID. Default to 0 (meaning no group)
         int m_GroupId;
@@ -556,6 +542,8 @@ namespace Unity.MLAgents
                 Academy.Instance.AgentForceReset -= _AgentReset;
                 NotifyAgentDone(DoneReason.Disabled);
             }
+
+            CleanupSensors();
             m_Brain?.Dispose();
             OnAgentDisabled?.Invoke(this);
             m_Initialized = false;
@@ -588,9 +576,12 @@ namespace Unity.MLAgents
             m_Brain?.RequestDecision(m_Info, sensors);
 
             // We also have to write any to any DemonstationStores so that they get the "done" flag.
-            foreach (var demoWriter in DemonstrationWriters)
+            if (DemonstrationWriters.Count != 0)
             {
-                demoWriter.Record(m_Info, sensors);
+                foreach (var demoWriter in DemonstrationWriters)
+                {
+                    demoWriter.Record(m_Info, sensors);
+                }
             }
 
             ResetSensors();
@@ -632,7 +623,7 @@ namespace Unity.MLAgents
         public void SetModel(
             string behaviorName,
             NNModel model,
-            InferenceDevice inferenceDevice = InferenceDevice.CPU)
+            InferenceDevice inferenceDevice = InferenceDevice.Default)
         {
             if (behaviorName == m_PolicyFactory.BehaviorName &&
                 model == m_PolicyFactory.Model &&
@@ -701,15 +692,13 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         /// </remarks>
         /// <param name="reward">The new value of the reward.</param>
         public void SetReward(float reward)
         {
-#if DEBUG
             Utilities.DebugCheckNanAndInfinity(reward, nameof(reward), nameof(SetReward));
-#endif
             m_CumulativeReward += (reward - m_Reward);
             m_Reward = reward;
         }
@@ -731,32 +720,26 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         ///</remarks>
         /// <param name="increment">Incremental reward value.</param>
         public void AddReward(float increment)
         {
-#if DEBUG
             Utilities.DebugCheckNanAndInfinity(increment, nameof(increment), nameof(AddReward));
-#endif
             m_Reward += increment;
             m_CumulativeReward += increment;
         }
 
         internal void SetGroupReward(float reward)
         {
-#if DEBUG
             Utilities.DebugCheckNanAndInfinity(reward, nameof(reward), nameof(SetGroupReward));
-#endif
             m_GroupReward = reward;
         }
 
         internal void AddGroupReward(float increment)
         {
-#if DEBUG
             Utilities.DebugCheckNanAndInfinity(increment, nameof(increment), nameof(AddGroupReward));
-#endif
             m_GroupReward += increment;
         }
 
@@ -926,8 +909,8 @@ namespace Unity.MLAgents
         /// implementing a simple heuristic function can aid in debugging agent actions and interactions
         /// with its environment.
         ///
-        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
-        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
+        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
         /// </remarks>
         /// <example>
@@ -953,29 +936,7 @@ namespace Unity.MLAgents
         /// <seealso cref="IActionReceiver.OnActionReceived"/>
         public virtual void Heuristic(in ActionBuffers actionsOut)
         {
-            // Disable deprecation warnings so we can call the legacy overload.
-#pragma warning disable CS0618
-
-            // The default implementation of Heuristic calls the
-            // obsolete version for backward compatibility
-            switch (m_PolicyFactory.BrainParameters.VectorActionSpaceType)
-            {
-                case SpaceType.Continuous:
-                    Heuristic(m_LegacyHeuristicCache);
-                    Array.Copy(m_LegacyHeuristicCache, actionsOut.ContinuousActions.Array, m_LegacyActionCache.Length);
-                    actionsOut.DiscreteActions.Clear();
-                    break;
-                case SpaceType.Discrete:
-                    Heuristic(m_LegacyHeuristicCache);
-                    var discreteActionSegment = actionsOut.DiscreteActions;
-                    for (var i = 0; i < actionsOut.DiscreteActions.Length; i++)
-                    {
-                        discreteActionSegment[i] = (int)m_LegacyHeuristicCache[i];
-                    }
-                    actionsOut.ContinuousActions.Clear();
-                    break;
-            }
-#pragma warning restore CS0618
+            Debug.LogWarning("Heuristic method called but not implemented. Returning placeholder actions.");
         }
 
         /// <summary>
@@ -1013,7 +974,7 @@ namespace Unity.MLAgents
             sensors.Capacity += attachedSensorComponents.Length;
             foreach (var component in attachedSensorComponents)
             {
-                sensors.Add(component.CreateSensor());
+                sensors.AddRange(component.CreateSensors());
             }
 
             // Support legacy CollectObservations
@@ -1034,7 +995,7 @@ namespace Unity.MLAgents
             }
 
             // Sort the Sensors by name to ensure determinism
-            sensors.Sort((x, y) => x.GetName().CompareTo(y.GetName()));
+            SensorUtils.SortSensors(sensors);
 
 #if DEBUG
             // Make sure the names are actually unique
@@ -1046,6 +1007,19 @@ namespace Unity.MLAgents
                     "Sensor names must be unique.");
             }
 #endif
+        }
+
+        void CleanupSensors()
+        {
+            // Dispose all attached sensor
+            for (var i = 0; i < sensors.Count; i++)
+            {
+                var sensor = sensors[i];
+                if (sensor is IDisposable disposableSensor)
+                {
+                    disposableSensor.Dispose();
+                }
+            }
         }
 
         void InitializeActuators()
@@ -1065,8 +1039,6 @@ namespace Unity.MLAgents
             var param = m_PolicyFactory.BrainParameters;
             m_VectorActuator = new AgentVectorActuator(this, this, param.ActionSpec);
             m_ActuatorManager = new ActuatorManager(attachedActuators.Length + 1);
-            m_LegacyActionCache = new float[m_VectorActuator.TotalNumberOfActions()];
-            m_LegacyHeuristicCache = new float[m_VectorActuator.TotalNumberOfActions()];
 
             m_ActuatorManager.Add(m_VectorActuator);
 
@@ -1128,9 +1100,12 @@ namespace Unity.MLAgents
             }
 
             // If we have any DemonstrationWriters, write the AgentInfo and sensors to them.
-            foreach (var demoWriter in DemonstrationWriters)
+            if (DemonstrationWriters.Count != 0)
             {
-                demoWriter.Record(m_Info, sensors);
+                foreach (var demoWriter in DemonstrationWriters)
+                {
+                    demoWriter.Record(m_Info, sensors);
+                }
             }
         }
 
@@ -1176,7 +1151,7 @@ namespace Unity.MLAgents
         ///     - <see cref="VectorSensor.AddObservation(Vector2)"/>
         ///     - <see cref="VectorSensor.AddObservation(Quaternion)"/>
         ///     - <see cref="VectorSensor.AddObservation(bool)"/>
-        ///     - <see cref="VectorSensor.AddObservation(IEnumerable{float})"/>
+        ///     - <see cref="VectorSensor.AddObservation(IList{float})"/>
         ///     - <see cref="VectorSensor.AddOneHotObservation(int, int)"/>
         ///
         /// You can use any combination of these helper functions to build the agent's
@@ -1190,7 +1165,7 @@ namespace Unity.MLAgents
         /// For more information about observations, see [Observations and Sensors].
         ///
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
-        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
+        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
         /// </remarks>
         public virtual void CollectObservations(VectorSensor sensor)
         {
@@ -1217,24 +1192,14 @@ namespace Unity.MLAgents
         /// </param>
         /// <remarks>
         /// When using Discrete Control, you can prevent the Agent from using a certain
-        /// action by masking it with <see cref="IDiscreteActionMask.WriteMask(int, IEnumerable{int})"/>.
+        /// action by masking it with <see cref="IDiscreteActionMask.SetActionEnabled"/>.
         ///
         /// See [Agents - Actions] for more information on masking actions.
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <seealso cref="IActionReceiver.OnActionReceived"/>
-        public virtual void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
-        {
-            if (m_ActionMasker == null)
-            {
-                m_ActionMasker = new DiscreteActionMasker(actionMask);
-            }
-            // Disable deprecation warnings so we can call the legacy overload.
-#pragma warning disable CS0618
-            CollectDiscreteActionMasks(m_ActionMasker);
-#pragma warning restore CS0618
-        }
+        public virtual void WriteDiscreteActionMask(IDiscreteActionMask actionMask) { }
 
         /// <summary>
         /// Implement `OnActionReceived()` to specify agent behavior at every step, based
@@ -1297,39 +1262,12 @@ namespace Unity.MLAgents
         ///
         /// For more information about implementing agent actions see [Agents - Actions].
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_16_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <param name="actions">
         /// Struct containing the buffers of actions to be executed at this step.
         /// </param>
-        public virtual void OnActionReceived(ActionBuffers actions)
-        {
-            var actionSpec = m_PolicyFactory.BrainParameters.ActionSpec;
-            // For continuous and discrete actions together, we don't need to fall back to the legacy method
-            if (actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions > 0)
-            {
-                // Nothing implemented.
-                return;
-            }
-
-            if (!actions.ContinuousActions.IsEmpty())
-            {
-                Array.Copy(actions.ContinuousActions.Array,
-                    m_LegacyActionCache,
-                    actionSpec.NumContinuousActions);
-            }
-            else
-            {
-                for (var i = 0; i < m_LegacyActionCache.Length; i++)
-                {
-                    m_LegacyActionCache[i] = (float)actions.DiscreteActions[i];
-                }
-            }
-            // Disable deprecation warnings so we can call the legacy overload.
-#pragma warning disable CS0618
-            OnActionReceived(m_LegacyActionCache);
-#pragma warning restore CS0618
-        }
+        public virtual void OnActionReceived(ActionBuffers actions) { }
 
         /// <summary>
         /// Implement `OnEpisodeBegin()` to set up an Agent instance at the beginning

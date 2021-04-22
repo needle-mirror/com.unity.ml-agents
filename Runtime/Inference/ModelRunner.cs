@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Unity.Barracuda;
 using UnityEngine.Profiling;
@@ -71,6 +70,18 @@ namespace Unity.MLAgents.Inference
                 D.logEnabled = m_Verbose;
 
                 barracudaModel = ModelLoader.Load(model);
+
+                var failedCheck = BarracudaModelParamLoader.CheckModelVersion(
+                        barracudaModel
+                    );
+                if (failedCheck != null)
+                {
+                    if (failedCheck.CheckType == BarracudaModelParamLoader.FailedCheck.CheckTypeEnum.Error)
+                    {
+                        throw new UnityAgentsException(failedCheck.Message);
+                    }
+                }
+
                 WorkerFactory.Type executionDevice;
                 switch (inferenceDevice)
                 {
@@ -83,6 +94,7 @@ namespace Unity.MLAgents.Inference
                     case InferenceDevice.Burst:
                         executionDevice = WorkerFactory.Type.CSharpBurst;
                         break;
+                    case InferenceDevice.Default: // fallthrough
                     default:
                         executionDevice = WorkerFactory.Type.CSharpBurst;
                         break;
