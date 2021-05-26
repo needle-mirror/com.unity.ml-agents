@@ -7,6 +7,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Unity.MLAgents.Analytics;
 using Unity.MLAgents.CommunicatorObjects;
@@ -20,10 +21,6 @@ namespace Unity.MLAgents
     /// Responsible for communication with External using gRPC.
     internal class RpcCommunicator : ICommunicator
     {
-        // The python package version must be >= s_MinSupportedPythonPackageVersion
-        // and <= s_MaxSupportedPythonPackageVersion.
-        static Version s_MinSupportedPythonPackageVersion = new Version("0.16.1");
-        static Version s_MaxSupportedPythonPackageVersion = new Version("0.20.0");
 
         public event QuitCommandHandler QuitCommandReceived;
         public event ResetCommandHandler ResetCommandReceived;
@@ -104,6 +101,13 @@ namespace Unity.MLAgents
 
         internal static bool CheckPythonPackageVersionIsCompatible(string pythonLibraryVersion)
         {
+            // Try to extract the numerical values from the pythonLibraryVersion, e.g. remove the ".dev0" suffix
+            var versionMatch = Regex.Match(pythonLibraryVersion, @"[0-9]+\.[0-9]+\.[0-9]");
+            if (versionMatch.Success)
+            {
+                pythonLibraryVersion = versionMatch.Value;
+            }
+
             Version pythonVersion;
             try
             {
@@ -111,12 +115,40 @@ namespace Unity.MLAgents
             }
             catch
             {
-                // Unparseable - this also catches things like "0.20.0-dev0" which we don't want to support
+                // Unparseable version.
+                // Anything like 0.42.0.dev0 should have been caught with the regex above, so anything here
+                // is totally bogus. For now, ignore these and let CheckPythonPackageVersionIsSupported handle it.
+                return true;
+            }
+
+            if (pythonVersion > PythonTrainerVersions.s_MaxCompatibleVersion)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check if the package is in the supported range. Note that some versions might be unsupported but
+        /// still compatible.
+        /// </summary>
+        /// <param name="pythonLibraryVersion"></param>
+        /// <returns></returns>
+        internal static bool CheckPythonPackageVersionIsSupported(string pythonLibraryVersion)
+        {
+            Version pythonVersion;
+            try
+            {
+                pythonVersion = new Version(pythonLibraryVersion);
+            }
+            catch
+            {
+                // Unparseable - this also catches things like "0.20.0.dev0" which we don't want to support
                 return false;
             }
 
-            if (pythonVersion < s_MinSupportedPythonPackageVersion ||
-                pythonVersion > s_MaxSupportedPythonPackageVersion)
+            if (pythonVersion < PythonTrainerVersions.s_MinSupportedVersion ||
+                pythonVersion > PythonTrainerVersions.s_MaxSupportedVersion)
             {
                 return false;
             }
@@ -186,7 +218,21 @@ namespace Unity.MLAgents
                     throw new UnityAgentsException("ICommunicator.Initialize() failed.");
                 }
 
-                var packageVersionSupported = CheckPythonPackageVersionIsCompatible(pythonPackageVersion);
+                var packageVersionCompatible = CheckPythonPackageVersionIsCompatible(pythonPackageVersion);
+                if (!packageVersionCompatible)
+                {
+                    Debug.LogErrorFormat(
+                        "Python package version ({0}) will produce model files that are incompatible with this " +
+                        "version of the com.unity.ml-agents Unity package. Please downgrade to a Python package " +
+                        "between {1} and {2}, or update to a new version of com.unity.ml-agents.",
+                        pythonPackageVersion,
+                        PythonTrainerVersions.s_MinSupportedVersion,
+                        PythonTrainerVersions.s_MaxSupportedVersion
+                    );
+                    throw new UnityAgentsException("Incompatible trainer version.");
+                }
+
+                var packageVersionSupported = CheckPythonPackageVersionIsSupported(pythonPackageVersion);
                 if (!packageVersionSupported)
                 {
                     Debug.LogWarningFormat(
@@ -194,8 +240,8 @@ namespace Unity.MLAgents
                         "It is strongly recommended that you use a Python package between {1} and {2}. " +
                         "Training will proceed, but the output format may be different.",
                         pythonPackageVersion,
-                        s_MinSupportedPythonPackageVersion,
-                        s_MaxSupportedPythonPackageVersion
+                        PythonTrainerVersions.s_MinSupportedVersion,
+                        PythonTrainerVersions.s_MaxSupportedVersion
                     );
                 }
             }
