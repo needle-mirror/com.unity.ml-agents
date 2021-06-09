@@ -3,7 +3,7 @@
 The _ML-Agents_ package contains the primary C# SDK for the [Unity ML-Agents
 Toolkit].
 
-The package allows you to convert any Unity scene to into a learning environment
+The package allows you to convert any Unity scene into a learning environment
 and train character behaviors using a variety of machine learning algorithms.
 Additionally, it allows you to embed these trained behaviors back into Unity
 scenes to control your characters. More specifically, the package provides the
@@ -12,7 +12,7 @@ following core functionalities:
 - Define Agents: entities, or characters, whose behavior will be learned. Agents
   are entities that generate observations (through sensors), take actions, and
   receive rewards from the environment.
-- Define Behaviors: entities that specifiy how an agent should act. Multiple
+- Define Behaviors: entities that specify how an agent should act. Multiple
   agents can share the same Behavior and a scene may have multiple Behaviors.
 - Record demonstrations of an agent within the Editor. You can use
   demonstrations to help train a behavior for that agent.
@@ -55,31 +55,31 @@ To install the companion Python package to enable training behaviors, follow the
 [installation instructions] on our [GitHub repository].
 
 ### Advanced Installation
-With the changes to Unity Package Manager in 2021, experimental packages will not show up in package list and have to be installed manually. There are two recommended ways to install the package manually:
+With the changes to Unity Package Manager in 2021, experimental packages will not show up in the package list and have to be installed manually. There are two recommended ways to install the package manually:
 
 #### Github via Package Manager
 
 In Unity 2019.4 or later, open the Package Manager, hit the "+" button, and select "Add package from git URL".
 
-![Package Manager git URL](https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/images/unity_package_manager_git_url.png)
+![Package Manager git URL](https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/images/unity_package_manager_git_url.png)
 
 In the dialog that appears, enter
  ```
-git+https://github.com/Unity-Technologies/ml-agents.git?path=com.unity.ml-agents#release_17
+git+https://github.com/Unity-Technologies/ml-agents.git?path=com.unity.ml-agents#release_18
 ```
 
 You can also edit your project's `manifest.json` directly and add the following line to the `dependencies`
 section:
 ```
-"com.unity.ml-agents": "git+https://github.com/Unity-Technologies/ml-agents.git?path=com.unity.ml-agents#release_17",
+"com.unity.ml-agents": "git+https://github.com/Unity-Technologies/ml-agents.git?path=com.unity.ml-agents#release_18",
 ```
 See [Git dependencies](https://docs.unity3d.com/Manual/upm-git.html#subfolder) for more information. Note that this
 may take several minutes to resolve the packages the first time that you add it.
 
 #### Local Installation for Development
 
-[Clone the repository](https://github.com/Unity-Technologies/ml-agents/tree/release_17_docs/docs/Installation.md#clone-the-ml-agents-toolkit-repository-optional) and follow the
-[Local Installation for Development](https://github.com/Unity-Technologies/ml-agents/tree/release_17_docs/docs/Installation.md#advanced-local-installation-for-development-1)
+[Clone the repository](https://github.com/Unity-Technologies/ml-agents/tree/release_18_docs/docs/Installation.md#clone-the-ml-agents-toolkit-repository-optional) and follow the
+[Local Installation for Development](https://github.com/Unity-Technologies/ml-agents/tree/release_18_docs/docs/Installation.md#advanced-local-installation-for-development-1)
 directions.
 
 ## Requirements
@@ -152,10 +152,10 @@ Please refer to "Information that is passively collected by Unity" in the
 [unity ML-Agents Toolkit]: https://github.com/Unity-Technologies/ml-agents
 [unity inference engine]: https://docs.unity3d.com/Packages/com.unity.barracuda@latest/index.html
 [package manager documentation]: https://docs.unity3d.com/Manual/upm-ui-install.html
-[installation instructions]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Installation.md
+[installation instructions]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Installation.md
 [github repository]: https://github.com/Unity-Technologies/ml-agents
 [python package]: https://github.com/Unity-Technologies/ml-agents
 [execution order of event functions]: https://docs.unity3d.com/Manual/ExecutionOrder.html
 [connect with us]: https://github.com/Unity-Technologies/ml-agents#community-and-feedback
 [ml-agents forum]: https://forum.unity.com/forums/ml-agents.453/
-[ML-Agents GitHub repo]: https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/com.unity.ml-agents.extensions
+[ML-Agents GitHub repo]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/com.unity.ml-agents.extensions

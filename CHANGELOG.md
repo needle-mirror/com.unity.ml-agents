@@ -6,10 +6,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-pre.3] - 2021-04-22
+
+## [2.1.0-exp.1] - 2021-06-09
+### Minor Changes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- update Barracuda to 2.0.0-pre.3. (#5385)
+- Fixed NullReferenceException when adding Behavior Parameters with no Agent. (#5382)
+- Add stacking option in Editor for `VectorSensorComponent`. (#5376)
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+- Lock cattrs dependency version to 1.6. (#5397)
+- Added a fully connected visual encoder for environments with very small image inputs. (#5351)
+- Colab notebooks illustrating the use of the Python API are now part of the repository. (#5399)
+### Bug Fixes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- RigidBodySensorComponent now displays a warning if it's used in a way that won't generate useful observations. (#5387)
+- Update the documentation with a note saying that `GridSensor` does not work in 2D environments. (#5396)
+- Fixed an error where sensors would not reset properly before collecting the last observation at the end of an
+episode. (#5375)
+
+#### ml-agents / ml-agents-envs / gym-unity (Python)
+- The calculation of the target entropy of SAC with continuous actions was incorrect and has been fixed. (#5372)
+- Fixed an issue where the histogram stats would not be reported correctly in TensorBoard. (#5410)
+- Fixed error when importing models which use the ResNet encoder. (#5358)
+
+
+## [2.0.0-exp.1] - 2021-04-22
 ### Major Changes
 #### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
-- update Barracuda to 2.0.0-pre.3.
 - The minimum supported Unity version was updated to 2019.4. (#5166)
 - Several breaking interface changes were made. See the
 [Migration Guide](https://github.com/Unity-Technologies/ml-agents/blob/release_17_docs/docs/Migrating.md) for more
