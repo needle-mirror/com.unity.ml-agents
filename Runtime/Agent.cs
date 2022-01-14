@@ -185,13 +185,13 @@ namespace Unity.MLAgents
     /// [OnDisable()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnDisable.html]
     /// [OnBeforeSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnBeforeSerialize.html
     /// [OnAfterSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnAfterSerialize.html
-    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md
-    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design.md
+    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md
+    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design.md
     /// [Unity ML-Agents Toolkit]: https://github.com/Unity-Technologies/ml-agents
-    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Readme.md
+    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Readme.md
     ///
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/" +
         "docs/Learning-Environment-Design-Agents.md")]
     [Serializable]
     [RequireComponent(typeof(BehaviorParameters))]
@@ -319,6 +319,11 @@ namespace Unity.MLAgents
         /// VectorSensor which is written to by AddVectorObs
         /// </summary>
         internal VectorSensor collectObservationsSensor;
+
+        /// <summary>
+        /// StackingSensor which is written to by AddVectorObs
+        /// </summary>
+        internal StackingSensor stackedCollectObservationsSensor;
 
         private RecursionChecker m_CollectObservationsChecker = new RecursionChecker("CollectObservations");
         private RecursionChecker m_OnEpisodeBeginChecker = new RecursionChecker("OnEpisodeBegin");
@@ -689,8 +694,8 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         /// </remarks>
         /// <param name="reward">The new value of the reward.</param>
         public void SetReward(float reward)
@@ -717,8 +722,8 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         ///</remarks>
         /// <param name="increment">Incremental reward value.</param>
         public void AddReward(float increment)
@@ -906,8 +911,8 @@ namespace Unity.MLAgents
         /// implementing a simple heuristic function can aid in debugging agent actions and interactions
         /// with its environment.
         ///
-        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
-        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
+        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
         /// </remarks>
         /// <example>
@@ -981,9 +986,9 @@ namespace Unity.MLAgents
                 collectObservationsSensor = new VectorSensor(param.VectorObservationSize);
                 if (param.NumStackedVectorObservations > 1)
                 {
-                    var stackingSensor = new StackingSensor(
+                    stackedCollectObservationsSensor = new StackingSensor(
                         collectObservationsSensor, param.NumStackedVectorObservations);
-                    sensors.Add(stackingSensor);
+                    sensors.Add(stackedCollectObservationsSensor);
                 }
                 else
                 {
@@ -1162,7 +1167,7 @@ namespace Unity.MLAgents
         /// For more information about observations, see [Observations and Sensors].
         ///
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
-        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
+        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
         /// </remarks>
         public virtual void CollectObservations(VectorSensor sensor)
         {
@@ -1180,6 +1185,17 @@ namespace Unity.MLAgents
         }
 
         /// <summary>
+        /// Returns a read-only view of the stacked observations that were generated in
+        /// <see cref="CollectObservations(VectorSensor)"/>. This is mainly useful inside of a
+        /// <see cref="Heuristic(in ActionBuffers)"/> method to avoid recomputing the observations.
+        /// </summary>
+        /// <returns>A read-only view of the stacked observations list.</returns>
+        public ReadOnlyCollection<float> GetStackedObservations()
+        {
+            return stackedCollectObservationsSensor.GetStackedObservations();
+        }
+
+        /// <summary>
         /// Implement `WriteDiscreteActionMask()` to collects the masks for discrete
         /// actions. When using discrete actions, the agent will not perform the masked
         /// action.
@@ -1193,7 +1209,7 @@ namespace Unity.MLAgents
         ///
         /// See [Agents - Actions] for more information on masking actions.
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <seealso cref="IActionReceiver.OnActionReceived"/>
         public virtual void WriteDiscreteActionMask(IDiscreteActionMask actionMask) { }
@@ -1259,7 +1275,7 @@ namespace Unity.MLAgents
         ///
         /// For more information about implementing agent actions see [Agents - Actions].
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_18_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_19_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <param name="actions">
         /// Struct containing the buffers of actions to be executed at this step.

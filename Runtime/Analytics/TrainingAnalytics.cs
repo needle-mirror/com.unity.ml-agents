@@ -5,7 +5,11 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 #if MLA_UNITY_ANALYTICS_MODULE
+
+#if ENABLE_CLOUD_SERVICES_ANALYTICS
 using UnityEngine.Analytics;
+#endif
+
 #if UNITY_EDITOR
 using UnityEditor.Analytics;
 #endif
@@ -43,7 +47,7 @@ namespace Unity.MLAgents.Analytics
 
         private static bool s_SentEnvironmentInitialized;
 
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
         /// <summary>
         /// Whether or not we've registered this particular event yet
         /// </summary>
@@ -64,7 +68,7 @@ namespace Unity.MLAgents.Analytics
 
         internal static bool EnableAnalytics()
         {
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
             if (s_EventsRegistered)
             {
                 return true;
@@ -106,7 +110,7 @@ namespace Unity.MLAgents.Analytics
 
         public static bool IsAnalyticsEnabled()
         {
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
             return EditorAnalytics.enabled;
 #else
             return false;
@@ -135,7 +139,7 @@ namespace Unity.MLAgents.Analytics
             // Debug.Log(
             //     $"Would send event {k_TrainingEnvironmentInitializedEventName} with body {JsonUtility.ToJson(tbiEvent, true)}"
             // );
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
             if (AnalyticsUtils.s_SendEditorAnalytics)
             {
                 EditorAnalytics.SendEventWithLimit(k_TrainingEnvironmentInitializedEventName, tbiEvent);
@@ -151,7 +155,7 @@ namespace Unity.MLAgents.Analytics
             IList<IActuator> actuators
         )
         {
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
             if (!IsAnalyticsEnabled())
                 return;
 
@@ -192,16 +196,30 @@ namespace Unity.MLAgents.Analytics
             return fullyQualifiedBehaviorName.Substring(0, lastQuestionIndex);
         }
 
-        [Conditional("MLA_UNITY_ANALYTICS_MODULE")]
-        public static void TrainingBehaviorInitialized(TrainingBehaviorInitializedEvent tbiEvent)
+        internal static TrainingBehaviorInitializedEvent SanitizeTrainingBehaviorInitializedEvent(TrainingBehaviorInitializedEvent tbiEvent)
         {
-#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE
+            // Hash the behavior name if the message version is from an older version of ml-agents that doesn't do trainer-side hashing.
+            // We'll also, for extra safety, verify that the BehaviorName is the size of the expected SHA256 hash.
+            // Context: The config field was added at the same time as trainer side hashing, so messages including it should already be hashed.
+            if (tbiEvent.Config.Length == 0 || tbiEvent.BehaviorName.Length != 64)
+            {
+                tbiEvent.BehaviorName = AnalyticsUtils.Hash(k_VendorKey, tbiEvent.BehaviorName);
+            }
+
+            return tbiEvent;
+        }
+
+        [Conditional("MLA_UNITY_ANALYTICS_MODULE")]
+        public static void TrainingBehaviorInitialized(TrainingBehaviorInitializedEvent rawTbiEvent)
+        {
+#if UNITY_EDITOR && MLA_UNITY_ANALYTICS_MODULE && ENABLE_CLOUD_SERVICES_ANALYTICS
             if (!IsAnalyticsEnabled())
                 return;
 
             if (!EnableAnalytics())
                 return;
 
+            var tbiEvent = SanitizeTrainingBehaviorInitializedEvent(rawTbiEvent);
             var behaviorName = tbiEvent.BehaviorName;
             var added = s_SentTrainingBehaviorInitialized.Add(behaviorName);
 
@@ -211,9 +229,7 @@ namespace Unity.MLAgents.Analytics
                 return;
             }
 
-            // Hash the behavior name so that there's no concern about PII or "secret" data being leaked.
             tbiEvent.TrainingSessionGuid = s_TrainingSessionGuid.ToString();
-            tbiEvent.BehaviorName = AnalyticsUtils.Hash(tbiEvent.BehaviorName);
 
             // Note - to debug, use JsonUtility.ToJson on the event.
             // Debug.Log(
@@ -236,7 +252,7 @@ namespace Unity.MLAgents.Analytics
             var remotePolicyEvent = new RemotePolicyInitializedEvent();
 
             // Hash the behavior name so that there's no concern about PII or "secret" data being leaked.
-            remotePolicyEvent.BehaviorName = AnalyticsUtils.Hash(behaviorName);
+            remotePolicyEvent.BehaviorName = AnalyticsUtils.Hash(k_VendorKey, behaviorName);
 
             remotePolicyEvent.TrainingSessionGuid = s_TrainingSessionGuid.ToString();
             remotePolicyEvent.ActionSpec = EventActionSpec.FromActionSpec(actionSpec);
