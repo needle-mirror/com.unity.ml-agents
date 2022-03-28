@@ -16,7 +16,7 @@ namespace Unity.MLAgents
     /// Struct that contains all the information for an Agent, including its
     /// observations, actions and current status.
     /// </summary>
-    internal struct AgentInfo
+    public struct AgentInfo
     {
         /// <summary>
         /// Keeps track of the last actions taken by the Brain.
@@ -195,6 +195,7 @@ namespace Unity.MLAgents
         "docs/Learning-Environment-Design-Agents.md")]
     [Serializable]
     [RequireComponent(typeof(BehaviorParameters))]
+    [DefaultExecutionOrder(-50)]
     public partial class Agent : MonoBehaviour, ISerializationCallbackReceiver, IActionReceiver, IHeuristicProvider
     {
         IPolicy m_Brain;
@@ -346,6 +347,34 @@ namespace Unity.MLAgents
         /// Delegate for the agent to unregister itself from the MultiAgentGroup without cyclic reference
         /// between agent and the group
         internal event Action<Agent> OnAgentDisabled;
+
+        /// <summary>
+        /// Called when the Agent is being loaded (before OnEnable()).
+        /// </summary>
+        ///<remarks>
+        /// This function registers the RpcCommunicator delegate if no delegate has been registered with CommunicatorFactory.
+        /// Always call the base Agent class version of this function if you implement `Awake()` in your
+        /// own Agent subclasses.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// protected override void Awake()
+        /// {
+        ///     base.Awake();
+        ///     // additional Awake logic...
+        /// }
+        /// </code>
+        /// </example>
+        protected internal virtual void Awake()
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+            if (!CommunicatorFactory.CommunicatorRegistered)
+            {
+                Debug.Log("Registered Communicator.");
+                CommunicatorFactory.Register<ICommunicator>(RpcCommunicator.Create);
+            }
+#endif
+        }
 
         /// <summary>
         /// Called when the attached [GameObject] becomes enabled and active.

@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.3.0-exp.2] - 2022-03-28
+### Major Changes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+#### ml-agents / ml-agents-envs
+- Refactored to support the new ML-Agents Pro package.
+- The minimum supported Python version for ml-agents-envs was changed to 3.7.2 (#5)
+- Added support for the PettingZoo multi-agent API (#6)
+- Refactored `gym-unity` into the `ml-agents-envs` package (#6)
+
+### Minor Changes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- Upgrade barracuda dependency to 3.0.0 (#9)
+#### ml-agents / ml-agents-envs
+- Added the new unity_vec_env file to the ml-agents-envs module
+- Extended support to python 3.9.10
+
+### Bug Fixes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+#### ml-agents / ml-agents-envs
+
 ## [2.2.1-exp.1] - 2022-01-14
 ### Major Changes
 

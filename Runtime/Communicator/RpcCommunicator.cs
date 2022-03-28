@@ -1,4 +1,4 @@
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
+#if UNITY_EDITOR || UNITY_STANDALONE
 #define MLA_SUPPORTED_TRAINING_PLATFORM
 #endif
 
@@ -22,7 +22,7 @@ using Unity.MLAgents.Analytics;
 namespace Unity.MLAgents
 {
     /// Responsible for communication with External using gRPC.
-    internal class RpcCommunicator : ICommunicator
+    public class RpcCommunicator : ICommunicator
     {
         public event QuitCommandHandler QuitCommandReceived;
         public event ResetCommandHandler ResetCommandReceived;
@@ -55,8 +55,17 @@ namespace Unity.MLAgents
         /// <summary>
         /// Initializes a new instance of the RPCCommunicator class.
         /// </summary>
-        public RpcCommunicator()
+        protected RpcCommunicator()
         {
+        }
+
+        public static RpcCommunicator Create()
+        {
+#if MLA_SUPPORTED_TRAINING_PLATFORM
+            return new RpcCommunicator();
+#else
+            return null;
+#endif
         }
 
 #region Initialization
@@ -596,4 +605,4 @@ namespace Unity.MLAgents
 #endif
     }
 }
-#endif // UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
+#endif // UNITY_EDITOR || UNITY_STANDALONE
