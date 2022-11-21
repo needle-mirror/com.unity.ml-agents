@@ -62,7 +62,7 @@ namespace Unity.MLAgents.Inference
         {
             Model barracudaModel;
             m_Model = model;
-            m_ModelName = model.name;
+            m_ModelName = model?.name;
             m_InferenceDevice = inferenceDevice;
             m_DeterministicInference = deterministicInference;
             m_TensorAllocator = new TensorCachingAllocator();

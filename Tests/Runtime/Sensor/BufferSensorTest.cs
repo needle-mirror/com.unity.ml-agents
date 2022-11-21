@@ -7,18 +7,6 @@ namespace Unity.MLAgents.Tests
     [TestFixture]
     public class BufferSensorTest
     {
-        [SetUp]
-        public void SetupCommunicator()
-        {
-            CommunicatorFactory.Register<ICommunicator>(RpcCommunicator.Create);
-        }
-
-        [TearDown]
-        public void TearDownCommunicator()
-        {
-            CommunicatorFactory.ClearCreator();
-        }
-
         [Test]
         public void TestBufferSensor()
         {

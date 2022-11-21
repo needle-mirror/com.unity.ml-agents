@@ -127,6 +127,24 @@ namespace Unity.MLAgents.Sensors
             set { m_ObservationStacks = value; }
         }
 
+        [HideInInspector, SerializeField]
+        [Tooltip("Disable to provide the rays in left to right order.  Warning: Alternating order will be deprecated, disable it to ensure compatibility with future versions of ML-Agents.")]
+        public bool m_AlternatingRayOrder = true;
+
+        /// <summary>
+        /// Determines how the rays are ordered.  By default the ordering is as follows: middle ray is first;
+        /// then alternates outward adding rays to the left and right.  If set to false, then the rays are
+        /// ordered from left to right (viewed from above) which is more amenable to processing with
+        /// conv nets.
+        /// This property will be deprecated with the next major version update and the left to right ordering
+        /// will be used thereafter.
+        /// </summary>
+        public bool AlternatingRayOrder
+        {
+            get { return m_AlternatingRayOrder; }
+            set { m_AlternatingRayOrder = value; }
+        }
+
         /// <summary>
         /// Color to code a ray that hits another object.
         /// </summary>
@@ -204,9 +222,12 @@ namespace Unity.MLAgents.Sensors
         /// <param name="maxRayDegrees">
         /// Cone size for rays. Using 90 degrees will cast rays to the left and right.
         /// Greater than 90 degrees will go backwards.
+        /// Orders the rays starting with the centermost and alternating to the left and right.
+        /// Should be deprecated with a future major version release (doing so will break existing
+        /// models).
         /// </param>
         /// <returns></returns>
-        internal static float[] GetRayAngles(int raysPerDirection, float maxRayDegrees)
+        internal static float[] GetRayAnglesAlternating(int raysPerDirection, float maxRayDegrees)
         {
             // Example:
             // { 90, 90 - delta, 90 + delta, 90 - 2*delta, 90 + 2*delta }
@@ -222,12 +243,41 @@ namespace Unity.MLAgents.Sensors
         }
 
         /// <summary>
+        /// Returns the specific ray angles given the number of rays per direction and the
+        /// cone size for the rays.
+        /// </summary>
+        /// <param name="raysPerDirection">Number of rays to the left and right of center.</param>
+        /// <param name="maxRayDegrees">
+        /// Cone size for rays. Using 90 degrees will cast rays to the left and right.
+        /// Greater than 90 degrees will go backwards.
+        /// Orders the rays from the left-most to the right-most which makes using a convolution
+        /// in the model easier.
+        /// </param>
+        /// <returns></returns>
+        internal static float[] GetRayAngles(int raysPerDirection, float maxRayDegrees)
+        {
+            // Example:
+            // { 90 - 3*delta, 90 - 2*delta, ..., 90, 90 + delta, ..., 90 + 3*delta }
+            var anglesOut = new float[2 * raysPerDirection + 1];
+            var delta = maxRayDegrees / raysPerDirection;
+
+            for (var i = 0; i < 2 * raysPerDirection + 1; i++)
+            {
+                anglesOut[i] = 90 + (i - raysPerDirection) * delta;
+            }
+
+            return anglesOut;
+        }
+
+        /// <summary>
         /// Get the RayPerceptionInput that is used by the <see cref="RayPerceptionSensor"/>.
         /// </summary>
         /// <returns></returns>
         public RayPerceptionInput GetRayPerceptionInput()
         {
-            var rayAngles = GetRayAngles(RaysPerDirection, MaxRayDegrees);
+            var rayAngles = m_AlternatingRayOrder ?
+                GetRayAnglesAlternating(RaysPerDirection, MaxRayDegrees) :
+                GetRayAngles(RaysPerDirection, MaxRayDegrees);
 
             var rayPerceptionInput = new RayPerceptionInput();
             rayPerceptionInput.RayLength = RayLength;

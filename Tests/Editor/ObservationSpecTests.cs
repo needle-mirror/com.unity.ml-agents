@@ -69,10 +69,7 @@ namespace Unity.MLAgents.Tests
         {
             var shape = new InplaceArray<int>(1, 2);
             var dimProps = new InplaceArray<DimensionProperty>(DimensionProperty.TranslationalEquivariance);
-            Assert.Throws<UnityAgentsException>(() =>
-            {
-                new ObservationSpec(shape, dimProps);
-            });
+            Assert.Throws<UnityAgentsException>(() => new ObservationSpec(shape, dimProps));
         }
     }
 }

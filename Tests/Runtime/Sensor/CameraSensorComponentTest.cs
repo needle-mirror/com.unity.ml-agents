@@ -29,15 +29,19 @@ namespace Unity.MLAgents.Tests
                     cameraComponent.Width = width;
                     cameraComponent.Grayscale = grayscale;
                     cameraComponent.CompressionType = compression;
+                    cameraComponent.RuntimeCameraEnable = true;
 
                     var sensor = cameraComponent.CreateSensors()[0];
                     var expectedShape = new InplaceArray<int>(height, width, grayscale ? 1 : 3);
                     Assert.AreEqual(expectedShape, sensor.GetObservationSpec().Shape);
                     Assert.AreEqual(typeof(CameraSensor), sensor.GetType());
 
+                    var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                    var runtimeCameraEnabled = (bool)typeof(CameraSensorComponent).GetField("m_RuntimeCameraEnable", flags).GetValue(cameraComponent);
+                    Assert.True(runtimeCameraEnabled);
+
                     // Make sure cleaning up the component cleans up the sensor too
                     cameraComponent.Dispose();
-                    var flags = BindingFlags.Instance | BindingFlags.NonPublic;
                     var cameraComponentSensor = (CameraSensor)typeof(CameraSensorComponent).GetField("m_Sensor", flags).GetValue(cameraComponent);
                     Assert.IsNull(cameraComponentSensor);
                     var cameraTexture = (Texture2D)typeof(CameraSensor).GetField("m_Texture", flags).GetValue(sensor);

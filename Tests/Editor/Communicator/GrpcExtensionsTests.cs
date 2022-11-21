@@ -20,8 +20,6 @@ namespace Unity.MLAgents.Tests
         [SetUp]
         public void SetUp()
         {
-            // We need register the communicator first before accessing the Academy.
-            CommunicatorFactory.Register<ICommunicator>(RpcCommunicator.Create);
             Academy.Instance.TrainerCapabilities = new UnityRLCapabilities();
         }
 

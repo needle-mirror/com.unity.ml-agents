@@ -830,7 +830,7 @@ namespace Unity.MLAgents.Inference
 
             for (int i = 0; i < modelDiscreteBranchesLength; i++)
             {
-                if (modelDiscreteBranches[i] != discreteActionBranches[i])
+                if (modelDiscreteBranches != null && modelDiscreteBranches[i] != discreteActionBranches[i])
                 {
                     return FailedCheck.Warning($"The number of Discrete Actions of branch {i} does not match. " +
                     $"Was expecting {discreteActionBranches[i]} but the model contains {modelDiscreteBranches[i]} "

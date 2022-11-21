@@ -63,6 +63,8 @@ namespace Unity.MLAgents.Editor
                 EditorGUILayout.PropertyField(so.FindProperty("m_EndVerticalOffset"), true);
             }
 
+            EditorGUILayout.PropertyField(so.FindProperty("m_AlternatingRayOrder"), true);
+
             EditorGUILayout.PropertyField(so.FindProperty("rayHitColor"), true);
             EditorGUILayout.PropertyField(so.FindProperty("rayMissColor"), true);
 

@@ -11,8 +11,16 @@ namespace Unity.MLAgents.Tests
         [Test]
         public void TestGetRayAngles()
         {
+            var anglesAlternating = RayPerceptionSensorComponentBase.GetRayAnglesAlternating(3, 90f);
+            var expectedAnglesAlternating = new[] { 90f, 60f, 120f, 30f, 150f, 0f, 180f };
+            Assert.AreEqual(expectedAnglesAlternating.Length, anglesAlternating.Length);
+            for (var i = 0; i < anglesAlternating.Length; i++)
+            {
+                Assert.AreEqual(expectedAnglesAlternating[i], anglesAlternating[i], .01);
+            }
+
             var angles = RayPerceptionSensorComponentBase.GetRayAngles(3, 90f);
-            var expectedAngles = new[] { 90f, 60f, 120f, 30f, 150f, 0f, 180f };
+            var expectedAngles = new[] { 0f, 30f, 60f, 90f, 120f, 150f, 180f };
             Assert.AreEqual(expectedAngles.Length, angles.Length);
             for (var i = 0; i < angles.Length; i++)
             {

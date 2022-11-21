@@ -28,6 +28,7 @@ namespace Unity.MLAgents.Editor
                 EditorGUILayout.PropertyField(so.FindProperty("m_ObservationType"), true);
             }
             EditorGUI.EndDisabledGroup();
+            EditorGUILayout.PropertyField(so.FindProperty("m_RuntimeCameraEnable"), true);
             EditorGUILayout.PropertyField(so.FindProperty("m_Compression"), true);
 
             var requireSensorUpdate = EditorGUI.EndChangeCheck();

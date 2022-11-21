@@ -89,6 +89,21 @@ namespace Unity.MLAgents.Sensors
         }
 
         [HideInInspector, SerializeField]
+        bool m_RuntimeCameraEnable;
+
+
+        /// <summary>
+        /// Controls the whether the camera sensor's attached camera
+        /// is enabled during runtime. Overrides the camera object enabled status.
+        /// Disabled for improved performance. Disabled by default.
+        /// </summary>
+        public bool RuntimeCameraEnable
+        {
+            get { return m_RuntimeCameraEnable; }
+            set { m_RuntimeCameraEnable = value; UpdateSensor(); }
+        }
+
+        [HideInInspector, SerializeField]
         [Range(1, 50)]
         [Tooltip("Number of camera frames that will be stacked before being fed to the neural network.")]
         int m_ObservationStacks = 1;
@@ -113,6 +128,11 @@ namespace Unity.MLAgents.Sensors
         {
             get { return m_ObservationStacks; }
             set { m_ObservationStacks = value; }
+        }
+
+        void Start()
+        {
+            UpdateSensor();
         }
 
         /// <summary>
@@ -140,6 +160,7 @@ namespace Unity.MLAgents.Sensors
             {
                 m_Sensor.Camera = m_Camera;
                 m_Sensor.CompressionType = m_Compression;
+                m_Sensor.Camera.enabled = m_RuntimeCameraEnable;
             }
         }
 

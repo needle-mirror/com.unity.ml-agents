@@ -1,6 +1,6 @@
 # com.unity.ml-agents
 
-Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).
+ML-Agents is a Unity package that allows users to use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).
 
 ## Installation
 

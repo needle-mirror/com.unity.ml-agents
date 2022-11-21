@@ -1,30 +1,27 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "2.3.0-exp.2",
-  "unity": "2020.3",
+  "version": "2.3.0-exp.3",
+  "unity": "2021.3",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
     "com.unity.barracuda": "3.0.0",
     "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0"
   },
+  "upmCi": {
+    "footprint": "62ef75019a3e03b3b1485e30cd1efe51548d099c"
+  },
+  "repository": {
+    "url": "https://github.com/Unity-Technologies/ml-agents.git",
+    "type": "git",
+    "revision": "95dec673e6262a95765af41fc325724f23b31b06"
+  },
   "samples": [
     {
       "displayName": "3D Ball",
-      "description": "The 3D Ball sample is a simple environment that is a great for jumping into Ml-Agents to see how things work.",
+      "description": "The 3D Ball sample is a simple environment that is a great for jumping into ML-Agents to see how things work.",
       "path": "Samples~/3DBall"
     }
-  ],
-  "upm": {
-    "changelog": "### Major Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n#### ml-agents / ml-agents-envs\n- Refactored to support the new ML-Agents Pro package.\n- The minimum supported Python version for ml-agents-envs was changed to 3.7.2 (#5)\n- Added support for the PettingZoo multi-agent API (#6)\n- Refactored `gym-unity` into the `ml-agents-envs` package (#6)\n\n### Minor Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Upgrade barracuda dependency to 3.0.0 (#9)\n#### ml-agents / ml-agents-envs\n- Added the new unity_vec_env file to the ml-agents-envs module\n- Extended support to python 3.9.10\n\n### Bug Fixes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n#### ml-agents / ml-agents-envs"
-  },
-  "upmCi": {
-    "footprint": "c62970ba69ca6c6c23c69f962406d2b422fdc6af"
-  },
-  "repository": {
-    "url": "https://github.cds.internal.unity3d.com/unity/com.unity.ml-agents.git",
-    "type": "git",
-    "revision": "1f46008172441745c70c2d8413f8a0a04d63416a"
-  }
+  ]
 }

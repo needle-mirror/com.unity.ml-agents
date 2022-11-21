@@ -19,8 +19,6 @@ namespace Unity.MLAgents.Tests
                 Academy.Instance.Dispose();
             }
 
-            CommunicatorFactory.Register<ICommunicator>(RpcCommunicator.Create);
-
             Academy.Instance.AutomaticSteppingEnabled = false;
         }
 
