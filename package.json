@@ -1,21 +1,26 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "2.3.0-exp.3",
-  "unity": "2021.3",
+  "version": "3.0.0-exp.1",
+  "unity": "2022.3",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
-    "com.unity.barracuda": "3.0.0",
+    "com.unity.sentis": "1.2.0-exp.2",
     "com.unity.modules.imageconversion": "1.0.0",
-    "com.unity.modules.jsonserialize": "1.0.0"
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.physics": "1.0.0"
+  },
+  "_upm": {
+    "changelog": "### Major Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Upgraded ML-Agents to Sentis 1.2.0-exp.2 and deprecated Barracuda. (#5979)\n- The minimum supported Unity version was updated to 2022.3. (#5950)\n- Added batched raycast sensor option. (#5950)\n\n#### ml-agents / ml-agents-envs\n- Updated to PyTorch 1.13.1 (#5982)\n- Deprecated support for Python 3.8.x and 3.9.x (#5981)\n\n### Minor Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Added DecisionStep parameter to DecisionRequester (#5940)\n  - This will allow the staggering of execution timing when using multi-agents, leading to more stable performance.\n\n#### ml-agents / ml-agents-envs\n- Added timeout cli and yaml config file support for specifying environment timeout. (#5991)\n- Added training config feature to evenly distribute checkpoints throughout training. (#5842)\n- Updated training area replicator to add a condition to only replicate training areas when running a build. (#5842)\n\n### Bug Fixes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Compiler errors when using IAsyncEnumerable<T> with .NET Standard 2.1 enabled (#5951)\n#### ml-agents / ml-agents-envs"
   },
   "upmCi": {
-    "footprint": "62ef75019a3e03b3b1485e30cd1efe51548d099c"
+    "footprint": "73a0eddacd31bb72115a822cb07d1be884017cbe"
   },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@3.0/manual/index.html",
   "repository": {
     "url": "https://github.com/Unity-Technologies/ml-agents.git",
     "type": "git",
-    "revision": "95dec673e6262a95765af41fc325724f23b31b06"
+    "revision": "7091c462eda99bd17444e54f25131271835454eb"
   },
   "samples": [
     {
