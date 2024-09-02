@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Unity.MLAgents.Sensors
 {
+    /// <summary>
+    /// Check that List Sensors are the same shape as the previous ones.
+    /// </summary>
     public class SensorShapeValidator
     {
         List<ObservationSpec> m_SensorShapes;
@@ -11,6 +14,7 @@ namespace Unity.MLAgents.Sensors
         /// Check that the List Sensors are the same shape as the previous ones.
         /// If this is the first List of Sensors being checked, its Sensor sizes will be saved.
         /// </summary>
+        /// <param name="sensors">List of Sensors to validate</param>
         public void ValidateSensors(List<ISensor> sensors)
         {
             if (m_SensorShapes == null)

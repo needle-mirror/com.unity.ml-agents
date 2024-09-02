@@ -34,16 +34,16 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Write a boolean value to the message.
         /// </summary>
-        /// <param name="b"></param>
+        /// <param name="b">Boolean value</param>
         public void WriteBoolean(bool b)
         {
             m_Writer.Write(b);
         }
 
         /// <summary>
-        /// Write an interger value to the message.
+        /// Write an integer value to the message.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="i">Integer value</param>
         public void WriteInt32(int i)
         {
             m_Writer.Write(i);
@@ -52,7 +52,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Write a float values to the message.
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="f">Float value</param>
         public void WriteFloat32(float f)
         {
             m_Writer.Write(f);
@@ -61,7 +61,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Write a string value to the message.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">String value</param>
         public void WriteString(string s)
         {
             var stringEncoded = Encoding.ASCII.GetBytes(s);
@@ -72,7 +72,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Write a list or array of floats to the message.
         /// </summary>
-        /// <param name="floatList"></param>
+        /// <param name="floatList">Float list</param>
         public void WriteFloatList(IList<float> floatList)
         {
             WriteInt32(floatList.Count);
@@ -85,7 +85,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Overwrite the message with a specific byte array.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Data</param>
         public void SetRawBytes(byte[] data)
         {
             // Reset first. Set the length to zero so that if there's more data than we're going to
@@ -101,7 +101,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Read the byte array of the message.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The byte array of the message.</returns>
         internal byte[] ToByteArray()
         {
             return m_Stream.ToArray();

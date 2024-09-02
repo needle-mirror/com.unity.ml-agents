@@ -95,7 +95,7 @@ namespace Unity.MLAgents.Editor
         /// <summary>
         /// Render the observation shapes of a DemonstrationSummary.
         /// </summary>
-        /// <param name="obsSummariesProperty"></param>
+        /// <param name="obsSummariesProperty">Serialized properties.</param>
         void MakeObservationsProperty(SerializedProperty obsSummariesProperty)
         {
             var shapesLabels = new List<string>();

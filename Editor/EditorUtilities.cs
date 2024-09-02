@@ -10,7 +10,7 @@ namespace Unity.MLAgents.Editor
         /// <summary>
         /// Whether or not properties that affect the model can be updated at the current time.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the model can be updated, False if not.</returns>
         public static bool CanUpdateModelProperties()
         {
             return !Application.isPlaying;

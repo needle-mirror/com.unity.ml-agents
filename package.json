@@ -1,26 +1,14 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "3.0.0-exp.1",
-  "unity": "2022.3",
+  "version": "3.0.0",
+  "unity": "2023.2",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
-    "com.unity.sentis": "1.2.0-exp.2",
+    "com.unity.sentis": "2.1.0",
     "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
-  },
-  "_upm": {
-    "changelog": "### Major Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Upgraded ML-Agents to Sentis 1.2.0-exp.2 and deprecated Barracuda. (#5979)\n- The minimum supported Unity version was updated to 2022.3. (#5950)\n- Added batched raycast sensor option. (#5950)\n\n#### ml-agents / ml-agents-envs\n- Updated to PyTorch 1.13.1 (#5982)\n- Deprecated support for Python 3.8.x and 3.9.x (#5981)\n\n### Minor Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Added DecisionStep parameter to DecisionRequester (#5940)\n  - This will allow the staggering of execution timing when using multi-agents, leading to more stable performance.\n\n#### ml-agents / ml-agents-envs\n- Added timeout cli and yaml config file support for specifying environment timeout. (#5991)\n- Added training config feature to evenly distribute checkpoints throughout training. (#5842)\n- Updated training area replicator to add a condition to only replicate training areas when running a build. (#5842)\n\n### Bug Fixes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Compiler errors when using IAsyncEnumerable<T> with .NET Standard 2.1 enabled (#5951)\n#### ml-agents / ml-agents-envs"
-  },
-  "upmCi": {
-    "footprint": "73a0eddacd31bb72115a822cb07d1be884017cbe"
-  },
-  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@3.0/manual/index.html",
-  "repository": {
-    "url": "https://github.com/Unity-Technologies/ml-agents.git",
-    "type": "git",
-    "revision": "7091c462eda99bd17444e54f25131271835454eb"
   },
   "samples": [
     {
@@ -28,5 +16,17 @@
       "description": "The 3D Ball sample is a simple environment that is a great for jumping into ML-Agents to see how things work.",
       "path": "Samples~/3DBall"
     }
-  ]
+  ],
+  "_upm": {
+    "changelog": "### Major Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Upgraded to Sentis 2.1.0 ()\n- Upgraded to Sentis 2.0.0 (#6137)\n- Upgraded to Sentis 1.3.0-pre.3 (#6070)\n- Upgraded to Sentis 1.3.0-exp.2 (#6013)\n- The minimum supported Unity version was updated to 2023.2. (#6071)\n\n#### ml-agents / ml-agents-envs\n- Upgraded to PyTorch 2.1.1. (#6013)\n\n### Minor Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Added no-graphics-monitor. (#6014)\n\n#### ml-agents / ml-agents-envs\n- Update Installation.md (#6004)\n- Updated Using-Virtual-Environment.md (#6033)\n\n### Bug Fixes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Fix failing ci post upgrade (#6141)\n- Fixed missing assembly reference for google protobuf. (#6099)\n- Fixed missing tensor Dispose in ModelRunner. (#6028)\n- Fixed 3DBall sample package to remove Barracuda dependency. (#6030)\n\n#### ml-agents / ml-agents-envs\n- Fix sample code indentation in migrating.md (#5840)\n- Fixed continuous integration tests (#6079)\n- Fixed bad like format (#6078)\n- Bumped numpy version to >=1.23.5,<1.24.0 (#6082)\n- Bumped onnx version to 1.15.0 (#6062)\n- Bumped protobuf version to >=3.6,<21 (#6062)"
+  },
+  "upmCi": {
+    "footprint": "de8be02ce2952a2d1224de9f237187cb5787be24"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@3.0/manual/index.html",
+  "repository": {
+    "url": "https://github.com/Unity-Technologies/ml-agents.git",
+    "type": "git",
+    "revision": "501ba880cc047f3efe0b140b6908ce26fa12b382"
+  }
 }

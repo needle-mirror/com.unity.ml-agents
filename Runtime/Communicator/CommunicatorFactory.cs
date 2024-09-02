@@ -23,6 +23,9 @@ namespace Unity.MLAgents
             set => s_Enabled = value;
         }
 
+        /// <summary>
+        /// Check if a communicator has been registered.
+        /// </summary>
         public static bool CommunicatorRegistered => s_Creator != null;
 
         internal static ICommunicator Create()
@@ -30,11 +33,19 @@ namespace Unity.MLAgents
             return s_Enabled ? s_Creator() : null;
         }
 
+        /// <summary>
+        /// Register a function that will create an ICommunicator instance.
+        /// </summary>
+        /// <param name="creator">Creator</param>
+        /// <typeparam name="T">Type of communicator</typeparam>
         public static void Register<T>(Func<T> creator) where T : ICommunicator
         {
             s_Creator = () => creator();
         }
 
+        /// <summary>
+        /// Clear the registered creator.
+        /// </summary>
         public static void ClearCreator()
         {
             s_Creator = null;

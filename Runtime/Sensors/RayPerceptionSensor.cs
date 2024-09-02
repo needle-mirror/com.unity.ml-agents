@@ -82,7 +82,7 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Returns the expected number of floats in the output.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The expected number of floats in the output.</returns>
         public int OutputSize()
         {
             return ((DetectableTags?.Count ?? 0) + 2) * (Angles?.Count ?? 0);
@@ -91,7 +91,7 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Get the cast start and end points for the given ray index/
         /// </summary>
-        /// <param name="rayIndex"></param>
+        /// <param name="rayIndex">Ray index</param>
         /// <returns>A tuple of the start and end positions in world space.</returns>
         public (Vector3 StartPositionWorld, Vector3 EndPositionWorld) RayExtents(int rayIndex)
         {
@@ -219,8 +219,8 @@ namespace Unity.MLAgents.Sensors
             /// 3. The 'numDetectableTags+1' element of the sublist will contain the normalized distance to the object
             ///    hit, or 1.0 if nothing was hit.
             /// </summary>
-            /// <param name="numDetectableTags"></param>
-            /// <param name="rayIndex"></param>
+            /// <param name="numDetectableTags">Number of detectable tags</param>
+            /// <param name="rayIndex">Ray index</param>
             /// <param name="buffer">Output buffer. The size must be equal to (numDetectableTags+2) * RayOutputs.Length</param>
             public void ToFloatArray(int numDetectableTags, int rayIndex, float[] buffer)
             {
@@ -317,7 +317,7 @@ namespace Unity.MLAgents.Sensors
         /// <see cref="ObservationWriter"/>.
         /// </summary>
         /// <param name="writer">Where the ray perception observations are written to.</param>
-        /// <returns></returns>
+        /// <returns>The number of written observations.</returns>
         public int Write(ObservationWriter writer)
         {
             using (TimerStack.Instance.Scoped("RayPerceptionSensor.Perceive"))
@@ -425,9 +425,8 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Evaluate the raycast results of all the rays from the RayPerceptionInput as a batch.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="rayIndex"></param>
-        /// <returns></returns>
+        /// <param name="input">Input</param>
+        /// <param name="rayIndex">Ray index</param>
         internal static void PerceiveBatchedRays(ref RayPerceptionOutput.RayOutput[] batchedRaycastOutputs, RayPerceptionInput input)
         {
             var numRays = input.Angles.Count;
@@ -552,9 +551,9 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Evaluate the raycast results of a single ray from the RayPerceptionInput.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="rayIndex"></param>
-        /// <returns></returns>
+        /// <param name="input">Input</param>
+        /// <param name="rayIndex">Ray index</param>
+        /// <returns>`RayOutput` result of a single raycast.</returns>
         internal static RayPerceptionOutput.RayOutput PerceiveSingleRay(
             RayPerceptionInput input,
             int rayIndex

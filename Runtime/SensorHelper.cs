@@ -14,10 +14,10 @@ namespace Unity.MLAgents.Sensors
         /// This should not generally be used in production code. It is only intended for
         /// simplifying unit tests.
         /// </summary>
-        /// <param name="sensor"></param>
-        /// <param name="expected"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
+        /// <param name="sensor">The `ISensor` to compare observation from.</param>
+        /// <param name="expected">The expected observations.</param>
+        /// <param name="errorMessage">The error message to throw if sensor observation doesn't match.</param>
+        /// <returns>True if the observations for the provided sensor equal the expected values, False if not.</returns>
         public static bool CompareObservation(ISensor sensor, float[] expected, out string errorMessage)
         {
             var numExpected = expected.Length;
@@ -51,16 +51,22 @@ namespace Unity.MLAgents.Sensors
             }
 
             sensor.Write(writer);
+            bool mismatch = false;
+            errorMessage = null;
             for (var i = 0; i < output.Length; i++)
             {
                 if (expected[i] != output[i])
                 {
-                    errorMessage = $"Expected and actual differed in position {i}. Expected: {expected[i]}  Actual: {output[i]} ";
-                    return false;
+                    string error = $"Expected and actual differed in position {i}. Expected: {expected[i]}  Actual: {output[i]} ";
+                    errorMessage = !mismatch ? error : $"{errorMessage}\n{error}";
+                    mismatch = true;
                 }
             }
+            if (mismatch)
+            {
+                return false;
+            }
 
-            errorMessage = null;
             return true;
         }
 
@@ -70,10 +76,10 @@ namespace Unity.MLAgents.Sensors
         /// This should not generally be used in production code. It is only intended for
         /// simplifying unit tests.
         /// </summary>
-        /// <param name="sensor"></param>
-        /// <param name="expected"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
+        /// <param name="sensor">`ISensor` to generate observation from.</param>
+        /// <param name="expected">The expected observations.</param>
+        /// <param name="errorMessage">The error message to throw if sensor observation doesn't match.</param>
+        /// <returns>True if the generated observation for the provided sensor equal the expected values, False if not.</returns>
         public static bool CompareObservation(ISensor sensor, float[,,] expected, out string errorMessage)
         {
             var tensorShape = new TensorShape(0, expected.GetLength(0), expected.GetLength(1), expected.GetLength(2));

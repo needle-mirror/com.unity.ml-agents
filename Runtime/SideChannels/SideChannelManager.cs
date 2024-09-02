@@ -89,7 +89,7 @@ namespace Unity.MLAgents.SideChannels
         /// If there are multiple SideChannels of the same type registered, the returned instance is arbitrary.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <returns>SideChannel if there is one registered.</returns>
         internal static T GetSideChannel<T>() where T : SideChannel
         {
             foreach (var sc in s_RegisteredChannels.Values)
@@ -106,7 +106,7 @@ namespace Unity.MLAgents.SideChannels
         /// Grabs the messages that the registered side channels will send to Python at the current step
         /// into a singe byte array.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The message that the registered side channels will send to Python at the current step.</returns>
         internal static byte[] GetSideChannelMessage()
         {
             return GetSideChannelMessage(s_RegisteredChannels);
@@ -117,7 +117,7 @@ namespace Unity.MLAgents.SideChannels
         /// into a singe byte array.
         /// </summary>
         /// <param name="sideChannels"> A dictionary of channel type to channel.</param>
-        /// <returns></returns>
+        /// <returns>The message that the registered side channels will send to Python at the current step.</returns>
         internal static byte[] GetSideChannelMessage(Dictionary<Guid, SideChannel> sideChannels)
         {
             if (!HasOutgoingMessages(sideChannels))
@@ -151,7 +151,7 @@ namespace Unity.MLAgents.SideChannels
         /// Check whether any of the sidechannels have queued messages.
         /// </summary>
         /// <param name="sideChannels"></param>
-        /// <returns></returns>
+        /// <returns>True if the sidechannel has queued messages, False if not.</returns>
         static bool HasOutgoingMessages(Dictionary<Guid, SideChannel> sideChannels)
         {
             foreach (var sideChannel in sideChannels.Values)

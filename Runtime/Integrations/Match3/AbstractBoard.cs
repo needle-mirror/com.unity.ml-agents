@@ -35,8 +35,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Check that all fields of the left-hand BoardSize are less than or equal to the field of the right-hand BoardSize
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="lhs">The first 'BoardSize' to compare.</param>
+        /// <param name="rhs">The second 'BoardSize' to compare.</param>
         /// <returns>True if all fields are less than or equal.</returns>
         public static bool operator <=(BoardSize lhs, BoardSize rhs)
         {
@@ -47,8 +47,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Check that all fields of the left-hand BoardSize are greater than or equal to the field of the right-hand BoardSize
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="lhs">The first 'BoardSize' to compare.</param>
+        /// <param name="rhs">The second 'BoardSize' to compare.</param>
         /// <returns>True if all fields are greater than or equal.</returns>
         public static bool operator >=(BoardSize lhs, BoardSize rhs)
         {
@@ -59,7 +59,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Return a string representation of the BoardSize.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The string summary of the `BoardSize`.</returns>
         public override string ToString()
         {
             return
@@ -76,7 +76,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// Return the maximum size of the board. This is used to determine the size of observations and actions,
         /// so the returned values must not change.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The maxium size of the board.</returns>
         public abstract BoardSize GetMaxBoardSize();
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// By default, this will return <see cref="GetMaxBoardSize"/>; if your board doesn't change size, you don't need to
         /// override it.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The current size of the board.</returns>
         public virtual BoardSize GetCurrentBoardSize()
         {
             return GetMaxBoardSize();
@@ -96,9 +96,9 @@ namespace Unity.MLAgents.Integrations.Match3
         /// This should be between 0 and BoardSize.NumCellTypes-1 (inclusive).
         /// The actual order of the values doesn't matter.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns></returns>
+        /// <param name="row">The row index.</param>
+        /// <param name="col">The collunm index.</param>
+        /// <returns>Color of piece at given row and column.</returns>
         public abstract int GetCellType(int row, int col);
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace Unity.MLAgents.Integrations.Match3
         /// This should be between 0 and BoardSize.NumSpecialTypes (inclusive).
         /// The actual order of the values doesn't matter.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns></returns>
+        /// <param name="row">The row index.</param>
+        /// <param name="col">The collunm index.</param>
+        /// <returns>The special type of the piece at the give row and column.</returns>
         public abstract int GetSpecialType(int row, int col);
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// passed to IsMoveValid().
         /// </remarks>
         /// <param name="m">The move to check.</param>
-        /// <returns></returns>
+        /// <returns>True if the move is valid False otherwise.</returns>
         public abstract bool IsMoveValid(Move m);
 
         /// <summary>
@@ -130,13 +130,13 @@ namespace Unity.MLAgents.Integrations.Match3
         /// requested. If this happens, it is safe to do nothing and request another move.
         /// </summary>
         /// <param name="m">The move to carry out.</param>
-        /// <returns></returns>
+        /// <returns>True if the move was made, False otherwise.</returns>
         public abstract bool MakeMove(Move m);
 
         /// <summary>
         /// Return the total number of moves possible for the board.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The total number of moves possible for the board.</returns>
         public int NumMoves()
         {
             return Move.NumPotentialMoves(GetMaxBoardSize());
@@ -151,7 +151,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Iterate through all moves on the board.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The `IEnumerator` for iterating all moves.</returns>
         public IEnumerable<Move> AllMoves()
         {
             var maxBoardSize = GetMaxBoardSize();
@@ -171,7 +171,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Iterate through all valid moves on the board.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The `IEnumerator` for iterating the valid moves.</returns>
         public IEnumerable<Move> ValidMoves()
         {
             var maxBoardSize = GetMaxBoardSize();
@@ -193,8 +193,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// 3 or more cells of the same type in a row. This assumes that all pieces are allowed
         /// to be moved; to add extra logic, incorporate it into your <see cref="IsMoveValid"/> method.
         /// </summary>
-        /// <param name="move"></param>
-        /// <returns></returns>
+        /// <param name="move">The `Move`.</param>
+        /// <returns>True if swapping the cells would result in 3 or more cells of the same type in a row.</returns>
         public bool SimpleIsMoveValid(Move move)
         {
             using (TimerStack.Instance.Scoped("SimpleIsMoveValid"))
@@ -232,7 +232,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <param name="newCol"></param>
         /// <param name="newValue"></param>
         /// <param name="incomingDirection"></param>
-        /// <returns></returns>
+        /// <returns>True if one of the cells that is swapped during a move matches 3 or more, False otherwise.</returns>
         bool CheckHalfMove(int newRow, int newCol, int newValue, Direction incomingDirection)
         {
             var currentBoardSize = GetCurrentBoardSize();

@@ -15,7 +15,7 @@ namespace Unity.MLAgents
     /// The DecisionRequester component provides a convenient and flexible way to
     /// trigger the agent decision making process. Without a DecisionRequester,
     /// your <see cref="Agent"/> implementation must manually call its
-    /// <seealso cref="Agent.RequestDecision"/> function.
+    /// <see cref="Agent.RequestDecision"/> function.
     /// </remarks>
     [AddComponentMenu("ML Agents/Decision Requester", (int)MenuGroup.Default)]
     [RequireComponent(typeof(Agent))]
@@ -115,8 +115,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Whether Agent.RequestDecision should be called on this update step.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">`RequestDecision` context.</param>
+        /// <returns>True if the agent `RequestDecision` should be called on this update step, False if not.</returns>
         protected virtual bool ShouldRequestDecision(DecisionRequestContext context)
         {
             return context.AcademyStepCount % DecisionPeriod == DecisionStep;
@@ -125,8 +125,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Whether Agent.RequestAction should be called on this update step.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">`RequestDecision` context.</param>
+        /// <returns>True if the agent `RequestAction` should be called on this update step, False if not.</returns>
         protected virtual bool ShouldRequestAction(DecisionRequestContext context)
         {
             return TakeActionsBetweenDecisions;

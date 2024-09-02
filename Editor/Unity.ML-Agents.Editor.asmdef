@@ -11,8 +11,10 @@
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Google.Protobuf_Packed.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [

@@ -49,7 +49,6 @@ namespace Unity.MLAgents.Inference
         public TensorApplier(
             ActionSpec actionSpec,
             int seed,
-            ITensorAllocator allocator,
             Dictionary<int, List<float>> memories,
             object sentisModel = null,
             bool deterministicInference = false)
@@ -61,26 +60,27 @@ namespace Unity.MLAgents.Inference
             }
 
             var model = (Model)sentisModel;
-            if (!model.SupportsContinuousAndDiscrete())
+            using var modelInfo = new SentisModelInfo(model, deterministicInference);
+            if (!modelInfo.SupportsContinuousAndDiscrete)
             {
                 actionSpec.CheckAllContinuousOrDiscrete();
             }
             if (actionSpec.NumContinuousActions > 0)
             {
-                var tensorName = model.ContinuousOutputName(deterministicInference);
+                var tensorName = modelInfo.ContinuousOutputName;
                 m_Dict[tensorName] = new ContinuousActionOutputApplier(actionSpec);
             }
-            var modelVersion = model.GetVersion();
+            var modelVersion = modelInfo.Version;
             if (actionSpec.NumDiscreteActions > 0)
             {
-                var tensorName = model.DiscreteOutputName(deterministicInference);
+                var tensorName = modelInfo.DiscreteOutputName;
                 if (modelVersion == (int)SentisModelParamLoader.ModelApiVersion.MLAgents1_0)
                 {
-                    m_Dict[tensorName] = new LegacyDiscreteActionOutputApplier(actionSpec, seed, allocator);
+                    m_Dict[tensorName] = new LegacyDiscreteActionOutputApplier(actionSpec, seed);
                 }
                 if (modelVersion == (int)SentisModelParamLoader.ModelApiVersion.MLAgents2_0)
                 {
-                    m_Dict[tensorName] = new DiscreteActionOutputApplier(actionSpec, seed, allocator);
+                    m_Dict[tensorName] = new DiscreteActionOutputApplier(actionSpec, seed);
                 }
             }
             m_Dict[TensorNames.RecurrentOutput] = new MemoryOutputApplier(memories);

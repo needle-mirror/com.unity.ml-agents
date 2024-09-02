@@ -18,7 +18,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Construct an IncomingMessage from the byte array.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Byte array</param>
         public IncomingMessage(byte[] data)
         {
             m_Data = data;
@@ -30,7 +30,7 @@ namespace Unity.MLAgents.SideChannels
         /// Read a boolean value from the message.
         /// </summary>
         /// <param name="defaultValue">Default value to use if the end of the message is reached.</param>
-        /// <returns></returns>
+        /// <returns>True if boolean was read by the reader, False if not.</returns>
         public bool ReadBoolean(bool defaultValue = false)
         {
             return CanReadMore() ? m_Reader.ReadBoolean() : defaultValue;
@@ -40,7 +40,7 @@ namespace Unity.MLAgents.SideChannels
         /// Read an integer value from the message.
         /// </summary>
         /// <param name="defaultValue">Default value to use if the end of the message is reached.</param>
-        /// <returns></returns>
+        /// <returns>True if int32 was read by the reader, False if not.</returns>
         public int ReadInt32(int defaultValue = 0)
         {
             return CanReadMore() ? m_Reader.ReadInt32() : defaultValue;
@@ -50,7 +50,7 @@ namespace Unity.MLAgents.SideChannels
         /// Read a float value from the message.
         /// </summary>
         /// <param name="defaultValue">Default value to use if the end of the message is reached.</param>
-        /// <returns></returns>
+        /// <returns>True if float32 was read by the reader, False if not.</returns>
         public float ReadFloat32(float defaultValue = 0.0f)
         {
             return CanReadMore() ? m_Reader.ReadSingle() : defaultValue;
@@ -60,7 +60,7 @@ namespace Unity.MLAgents.SideChannels
         /// Read a string value from the message.
         /// </summary>
         /// <param name="defaultValue">Default value to use if the end of the message is reached.</param>
-        /// <returns></returns>
+        /// <returns>True if string was read by the reader, False if not.</returns>
         public string ReadString(string defaultValue = default)
         {
             if (!CanReadMore())
@@ -77,7 +77,7 @@ namespace Unity.MLAgents.SideChannels
         /// Reads a list of floats from the message. The length of the list is stored in the message.
         /// </summary>
         /// <param name="defaultValue">Default value to use if the end of the message is reached.</param>
-        /// <returns></returns>
+        /// <returns>True if list of float was read by the reader, False if not.</returns>
         public IList<float> ReadFloatList(IList<float> defaultValue = default)
         {
             if (!CanReadMore())
@@ -99,7 +99,7 @@ namespace Unity.MLAgents.SideChannels
         /// Gets the original data of the message. Note that this will return all of the data,
         /// even if part of it has already been read.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Original data of the message.</returns>
         public byte[] GetRawBytes()
         {
             return m_Data;
@@ -117,7 +117,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Whether or not there is more data left in the stream that can be read.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if there is still data left in the stream that can be read, False if not.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         bool CanReadMore()
         {

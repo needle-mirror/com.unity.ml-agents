@@ -48,7 +48,6 @@ namespace Unity.MLAgents.Inference
         /// deterministic. </param>
         public TensorGenerator(
             int seed,
-            ITensorAllocator allocator,
             Dictionary<int, List<float>> memories,
             object sentisModel = null,
             bool deterministicInference = false)
@@ -59,39 +58,40 @@ namespace Unity.MLAgents.Inference
                 return;
             }
             var model = (Model)sentisModel;
+            using var modelInfo = new SentisModelInfo(model, deterministicInference);
 
-            m_ApiVersion = model.GetVersion();
+            m_ApiVersion = modelInfo.Version;
 
             // Generator for Inputs
             m_Dict[TensorNames.BatchSizePlaceholder] =
-                new BatchSizeGenerator(allocator);
+                new BatchSizeGenerator();
             m_Dict[TensorNames.SequenceLengthPlaceholder] =
-                new SequenceLengthGenerator(allocator);
+                new SequenceLengthGenerator();
             m_Dict[TensorNames.RecurrentInPlaceholder] =
-                new RecurrentInputGenerator(allocator, memories);
+                new RecurrentInputGenerator(memories);
 
             m_Dict[TensorNames.PreviousActionPlaceholder] =
-                new PreviousActionInputGenerator(allocator);
+                new PreviousActionInputGenerator();
             m_Dict[TensorNames.ActionMaskPlaceholder] =
-                new ActionMaskInputGenerator(allocator);
+                new ActionMaskInputGenerator();
             m_Dict[TensorNames.RandomNormalEpsilonPlaceholder] =
-                new RandomNormalInputGenerator(seed, allocator);
+                new RandomNormalInputGenerator(seed);
 
 
             // Generators for Outputs
-            if (model.HasContinuousOutputs(deterministicInference))
+            if (modelInfo.HasContinuousOutputs)
             {
-                m_Dict[model.ContinuousOutputName(deterministicInference)] = new BiDimensionalOutputGenerator(allocator);
+                m_Dict[modelInfo.ContinuousOutputName] = new BiDimensionalOutputGenerator();
             }
-            if (model.HasDiscreteOutputs(deterministicInference))
+            if (modelInfo.HasDiscreteOutputs)
             {
-                m_Dict[model.DiscreteOutputName(deterministicInference)] = new BiDimensionalOutputGenerator(allocator);
+                m_Dict[modelInfo.DiscreteOutputName] = new BiDimensionalOutputGenerator();
             }
-            m_Dict[TensorNames.RecurrentOutput] = new BiDimensionalOutputGenerator(allocator);
-            m_Dict[TensorNames.ValueEstimateOutput] = new BiDimensionalOutputGenerator(allocator);
+            m_Dict[TensorNames.RecurrentOutput] = new BiDimensionalOutputGenerator();
+            m_Dict[TensorNames.ValueEstimateOutput] = new BiDimensionalOutputGenerator();
         }
 
-        public void InitializeObservations(List<ISensor> sensors, ITensorAllocator allocator)
+        public void InitializeObservations(List<ISensor> sensors)
         {
             if (m_ApiVersion == (int)SentisModelParamLoader.ModelApiVersion.MLAgents1_0)
             {
@@ -111,7 +111,7 @@ namespace Unity.MLAgents.Inference
                         case 1:
                             if (vecObsGen == null)
                             {
-                                vecObsGen = new ObservationGenerator(allocator);
+                                vecObsGen = new ObservationGenerator();
                             }
                             obsGen = vecObsGen;
                             obsGenName = TensorNames.VectorObservationPlaceholder;
@@ -119,13 +119,13 @@ namespace Unity.MLAgents.Inference
                         case 2:
                             // If the tensor is of rank 2, we use the index of the sensor
                             // to create the name
-                            obsGen = new ObservationGenerator(allocator);
+                            obsGen = new ObservationGenerator();
                             obsGenName = TensorNames.GetObservationName(sensorIndex);
                             break;
                         case 3:
                             // If the tensor is of rank 3, we use the "visual observation
                             // index", which only counts the rank 3 sensors
-                            obsGen = new ObservationGenerator(allocator);
+                            obsGen = new ObservationGenerator();
                             obsGenName = TensorNames.GetVisualObservationName(visIndex);
                             visIndex++;
                             break;
@@ -142,7 +142,7 @@ namespace Unity.MLAgents.Inference
             {
                 for (var sensorIndex = 0; sensorIndex < sensors.Count; sensorIndex++)
                 {
-                    var obsGen = new ObservationGenerator(allocator);
+                    var obsGen = new ObservationGenerator();
                     var obsGenName = TensorNames.GetObservationName(sensorIndex);
                     obsGen.AddSensorIndex(sensorIndex);
                     m_Dict[obsGenName] = obsGen;

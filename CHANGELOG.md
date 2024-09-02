@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2024-09-02
+### Major Changes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- Upgraded to Sentis 2.1.0 ()
+- Upgraded to Sentis 2.0.0 (#6137)
+- Upgraded to Sentis 1.3.0-pre.3 (#6070)
+- Upgraded to Sentis 1.3.0-exp.2 (#6013)
+- The minimum supported Unity version was updated to 2023.2. (#6071)
+
+#### ml-agents / ml-agents-envs
+- Upgraded to PyTorch 2.1.1. (#6013)
+
+### Minor Changes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- Added no-graphics-monitor. (#6014)
+
+#### ml-agents / ml-agents-envs
+- Update Installation.md (#6004)
+- Updated Using-Virtual-Environment.md (#6033)
+
+### Bug Fixes
+#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
+- Fix failing ci post upgrade (#6141)
+- Fixed missing assembly reference for google protobuf. (#6099)
+- Fixed missing tensor Dispose in ModelRunner. (#6028)
+- Fixed 3DBall sample package to remove Barracuda dependency. (#6030)
+
+#### ml-agents / ml-agents-envs
+- Fix sample code indentation in migrating.md (#5840)
+- Fixed continuous integration tests (#6079)
+- Fixed bad like format (#6078)
+- Bumped numpy version to >=1.23.5,<1.24.0 (#6082)
+- Bumped onnx version to 1.15.0 (#6062)
+- Bumped protobuf version to >=3.6,<21 (#6062)
+
 ## [3.0.0-exp.1] - 2023-10-09
 ### Major Changes
 #### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
@@ -52,7 +87,7 @@ versioned under `ml-agents-envs` package in the future (#)
 ### Minor Changes
 #### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
 - Added switch to RayPerceptionSensor to allow rays to be ordered left to right. (#26)
-	- Current alternating order is still the default but will be deprecated.
+    - Current alternating order is still the default but will be deprecated.
 - Added support for enabling/disabling camera object attached to camera sensor in order to improve performance. (#31)
 
 #### ml-agents / ml-agents-envs
@@ -926,4 +961,4 @@ vector observations to be used simultaneously. (#3981) Thank you @shakenes !
 
 ### This is the first release of _Unity Package ML-Agents_.
 
-_Short description of this release_
+ - Initial release.

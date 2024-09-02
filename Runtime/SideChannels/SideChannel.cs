@@ -26,7 +26,7 @@ namespace Unity.MLAgents.SideChannels
         /// An int identifier for the SideChannel. Ensures that there is only ever one side channel
         /// of each type. Ensure the Unity side channels will be linked to their Python equivalent.
         /// </summary>
-        /// <returns> The integer identifier of the SideChannel.</returns>
+        /// <value> The integer identifier of the SideChannel.</value>
         public Guid ChannelId
         {
             get;

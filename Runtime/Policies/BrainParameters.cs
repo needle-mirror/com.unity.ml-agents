@@ -28,7 +28,7 @@ namespace Unity.MLAgents.Policies
     /// </summary>
     /// <remarks>
     /// Set brain parameters for an <see cref="Agent"/> instance using the
-    /// <seealso cref="BehaviorParameters"/> component attached to the agent's [GameObject].
+    /// <see cref="BehaviorParameters"/> component attached to the agent's [GameObject].
     ///
     /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
     /// </remarks>

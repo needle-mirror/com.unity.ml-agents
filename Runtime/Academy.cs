@@ -20,7 +20,7 @@ using Unity.Sentis;
  * API. For more information on each of these entities, in addition to how to
  * set-up a learning environment and train the behavior of characters in a
  * Unity scene, please browse our documentation pages on GitHub:
- * https://github.com/Unity-Technologies/ml-agents/tree/release_21_docs/docs/
+ * https://github.com/Unity-Technologies/ml-agents/tree/release_22_docs/docs/
  */
 
 namespace Unity.MLAgents
@@ -61,7 +61,7 @@ namespace Unity.MLAgents
     /// fall back to inference or heuristic decisions. (You can also set agents to always use
     /// inference or heuristics.)
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/tree/release_21_docs/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/tree/release_22_docs/" +
         "docs/Learning-Environment-Design.md")]
     public class Academy : IDisposable
     {
@@ -107,7 +107,7 @@ namespace Unity.MLAgents
         /// Unity package version of com.unity.ml-agents.
         /// This must match the version string in package.json and is checked in a unit test.
         /// </summary>
-        internal const string k_PackageVersion = "3.0.0-exp.1";
+        internal const string k_PackageVersion = "3.0.0";
 
         const int k_EditorTrainingPort = 5004;
 
@@ -400,7 +400,7 @@ namespace Unity.MLAgents
         /// then the values of the parameters generated from the training process can be
         /// retrieved here.
         /// </summary>
-        /// <returns></returns>
+        /// <value>The `EnvironmentParameters` instance.</value>
         public EnvironmentParameters EnvironmentParameters
         {
             get { return m_EnvironmentParameters; }
@@ -410,7 +410,6 @@ namespace Unity.MLAgents
         /// Returns the <see cref="StatsRecorder"/> instance. This instance can be used
         /// to record any statistics from the Unity environment.
         /// </summary>
-        /// <returns></returns>
         public StatsRecorder StatsRecorder
         {
             get { return m_StatsRecorder; }
@@ -537,9 +536,6 @@ namespace Unity.MLAgents
         /// <summary>
         /// The current step count (within the current episode).
         /// </summary>
-        /// <value>
-        /// Current step count.
-        /// </value>
         public int StepCount
         {
             get { return m_StepCount; }
@@ -548,9 +544,6 @@ namespace Unity.MLAgents
         /// <summary>
         /// Returns the total step count.
         /// </summary>
-        /// <value>
-        /// Total step count.
-        /// </value>
         public int TotalStepCount
         {
             get { return m_TotalStepCount; }

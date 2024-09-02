@@ -75,7 +75,7 @@ namespace Unity.MLAgents.Sensors
         /// The dimensions have translational equivariance along width and height,
         /// and no property along the channels dimension.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The `ObservationSpec`.</returns>
         public ObservationSpec GetObservationSpec()
         {
             return m_ObservationSpec;
@@ -99,7 +99,7 @@ namespace Unity.MLAgents.Sensors
         /// Writes out the generated, uncompressed image to the provided <see cref="ObservationWriter"/>.
         /// </summary>
         /// <param name="writer">Where the observation is written to.</param>
-        /// <returns></returns>
+        /// <returns>The number of elements written.</returns>
         public int Write(ObservationWriter writer)
         {
             using (TimerStack.Instance.Scoped("CameraSensor.WriteToTensor"))

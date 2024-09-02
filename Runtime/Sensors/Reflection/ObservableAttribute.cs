@@ -24,8 +24,10 @@ namespace Unity.MLAgents.Sensors.Reflection
     /// to fields or properties.
     /// </remarks>
     /// <example>
+    /// <para>
     /// This sample class will produce two observations, one for the m_Health field, and one
     /// for the HealthPercent property.
+    /// </para>
     /// <code>
     /// using Unity.MLAgents;
     /// using Unity.MLAgents.Sensors.Reflection;
@@ -86,7 +88,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// </summary>
         /// <param name="o">Object being reflected</param>
         /// <param name="excludeInherited">Whether to exclude inherited properties or not.</param>
-        /// <returns></returns>
+        /// <returns>`FieldInfo` for all fields that have an O`bservableAttribute`.</returns>
         static IEnumerable<(FieldInfo, ObservableAttribute)> GetObservableFields(object o, bool excludeInherited)
         {
             // TODO cache these (and properties) by type, so that we only have to reflect once.
@@ -107,7 +109,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// </summary>
         /// <param name="o">Object being reflected</param>
         /// <param name="excludeInherited">Whether to exclude inherited properties or not.</param>
-        /// <returns></returns>
+        /// <returns>`PropertyInfo` for all fields that have an `ObservableAttribute`.</returns>
         static IEnumerable<(PropertyInfo, ObservableAttribute)> GetObservableProperties(object o, bool excludeInherited)
         {
             var bindingFlags = k_BindingFlags | (excludeInherited ? BindingFlags.DeclaredOnly : 0);
@@ -127,7 +129,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// </summary>
         /// <param name="o">Object being reflected</param>
         /// <param name="excludeInherited">Whether to exclude inherited properties or not.</param>
-        /// <returns></returns>
+        /// <returns>Corresponding list of sensors.</returns>
         internal static List<ISensor> CreateObservableSensors(object o, bool excludeInherited)
         {
             var sensorsOut = new List<ISensor>();
@@ -165,7 +167,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// <param name="fieldInfo"></param>
         /// <param name="propertyInfo"></param>
         /// <param name="observableAttribute"></param>
-        /// <returns></returns>
+        /// <returns>The created `ISensor`.</returns>
         /// <exception cref="UnityAgentsException"></exception>
         static ISensor CreateReflectionSensor(object o, FieldInfo fieldInfo, PropertyInfo propertyInfo, ObservableAttribute observableAttribute)
         {
@@ -237,7 +239,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// <param name="o"></param>
         /// <param name="excludeInherited"></param>
         /// <param name="errorsOut"></param>
-        /// <returns></returns>
+        /// <returns>The total observation size.</returns>
         internal static int GetTotalObservationSize(object o, bool excludeInherited, List<string> errorsOut)
         {
             int sizeOut = 0;

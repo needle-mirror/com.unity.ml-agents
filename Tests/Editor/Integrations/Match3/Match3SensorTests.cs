@@ -351,7 +351,7 @@ namespace Unity.MLAgents.Tests.Integrations.Match3
         /// Helper method for un-concatenating PNG observations.
         /// </summary>
         /// <param name="concatenated"></param>
-        /// <returns></returns>
+        /// <returns>The PNG observations.</returns>
         List<byte[]> SplitPNGs(byte[] concatenated)
         {
             var pngsOut = new List<byte[]>();

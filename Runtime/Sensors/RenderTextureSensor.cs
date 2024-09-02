@@ -33,7 +33,7 @@ namespace Unity.MLAgents.Sensors
         /// <param name="grayscale">Whether to convert it to grayscale or not.</param>
         /// <param name="name">Name of the sensor.</param>
         /// <param name="compressionType">Compression method for the render texture.</param>
-        /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
+        // [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
         public RenderTextureSensor(
             RenderTexture renderTexture, bool grayscale, string name, SensorCompressionType compressionType)
         {

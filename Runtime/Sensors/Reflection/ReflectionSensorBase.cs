@@ -70,7 +70,7 @@ namespace Unity.MLAgents.Sensors.Reflection
         /// Get either the reflected field, or return the reflected property.
         /// This should be used by implementations in their WriteReflectedField() method.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>`object` representing either the reflected field, or return the reflected property.</returns>
         protected object GetReflectedValue()
         {
             return m_FieldInfo != null ?

@@ -60,11 +60,18 @@ namespace Unity.MLAgents
         /// </summary>
         public int groupId;
 
+        /// <summary>
+        /// Clear stored actions.
+        /// </summary>
         public void ClearActions()
         {
             storedActions.Clear();
         }
 
+        /// <summary>
+        /// Copy actions.
+        /// </summary>
+        /// <param name="actionBuffers">The ActionBuffers to copy from.</param>
         public void CopyActions(ActionBuffers actionBuffers)
         {
             var continuousActions = storedActions.ContinuousActions;
@@ -128,15 +135,15 @@ namespace Unity.MLAgents
     /// component attached to the agent's [GameObject]. The <see cref="BehaviorType"/> setting
     /// determines how decisions are made:
     ///
-    /// * <see cref="BehaviorType.Default"/>: decisions are made by the external process,
-    ///   when connected. Otherwise, decisions are made using inference. If no inference model
-    ///   is specified in the BehaviorParameters component, then heuristic decision
-    ///   making is used.
-    /// * <see cref="BehaviorType.InferenceOnly"/>: decisions are always made using the trained
-    ///   model specified in the <see cref="BehaviorParameters"/> component.
-    /// * <see cref="BehaviorType.HeuristicOnly"/>: when a decision is needed, the agent's
-    ///   <see cref="Heuristic(in ActionBuffers)"/> function is called. Your implementation is responsible for
-    ///   providing the appropriate action.
+    /// <see cref="BehaviorType.Default"/>: decisions are made by the external process,
+    /// when connected. Otherwise, decisions are made using inference. If no inference model
+    /// is specified in the BehaviorParameters component, then heuristic decision
+    /// making is used.
+    /// <see cref="BehaviorType.InferenceOnly"/>: decisions are always made using the trained
+    /// model specified in the <see cref="BehaviorParameters"/> component.
+    /// <see cref="BehaviorType.HeuristicOnly"/>: when a decision is needed, the agent's
+    /// <see cref="Heuristic(in ActionBuffers)"/> function is called. Your implementation is responsible for
+    /// providing the appropriate action.
     ///
     /// To trigger an agent decision automatically, you can attach a <see cref="DecisionRequester"/>
     /// component to the Agent game object. You can also call the agent's <see cref="RequestDecision"/>
@@ -185,13 +192,13 @@ namespace Unity.MLAgents
     /// [OnDisable()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnDisable.html]
     /// [OnBeforeSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnBeforeSerialize.html
     /// [OnAfterSerialize()]: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnAfterSerialize.html
-    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md
-    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design.md
+    /// [Agents]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md
+    /// [Reinforcement Learning in Unity]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design.md
     /// [Unity ML-Agents Toolkit]: https://github.com/Unity-Technologies/ml-agents
-    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Readme.md
+    /// [Unity ML-Agents Toolkit manual]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Readme.md
     ///
     /// </remarks>
-    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/" +
+    [HelpURL("https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/" +
         "docs/Learning-Environment-Design-Agents.md")]
     [Serializable]
     [RequireComponent(typeof(BehaviorParameters))]
@@ -228,20 +235,25 @@ namespace Unity.MLAgents
         /// Set to 0 for unlimited episode length.
         ///
         /// When an episode ends and a new one begins, the Agent object's
-        /// <seealso cref="OnEpisodeBegin"/> function is called. You can implement
+        /// <see cref="OnEpisodeBegin"/> function is called. You can implement
         /// <see cref="OnEpisodeBegin"/> to reset the agent or remove it from the
-        /// environment. An agent's episode can also end if you call its <seealso cref="EndEpisode"/>
+        /// environment. An agent's episode can also end if you call its <see cref="EndEpisode"/>
         /// method or an external process resets the environment through the <see cref="Academy"/>.
         ///
         /// Consider limiting the number of steps in an episode to avoid wasting time during
         /// training. If you set the max step value to a reasonable estimate of the time it should
         /// take to complete a task, then agents that haven’t succeeded in that time frame will
         /// reset and start a new training episode rather than continue to fail.
+        ///
+        /// **Note:** in general, you should limit the differences between the code you execute
+        /// during training and the code you run during inference.
         /// </remarks>
         /// <example>
+        /// <para>
         /// To use a step limit when training while allowing agents to run without resetting
         /// outside of training, you can set the max step to 0 in <see cref="Initialize"/>
         /// if the <see cref="Academy"/> is not connected to an external process.
+        /// </para>
         /// <code>
         /// using Unity.MLAgents;
         ///
@@ -256,8 +268,6 @@ namespace Unity.MLAgents
         ///     }
         /// }
         /// </code>
-        /// **Note:** in general, you should limit the differences between the code you execute
-        /// during training and the code you run during inference.
         /// </example>
         [FormerlySerializedAs("maxStep")]
         [HideInInspector] public int MaxStep;
@@ -465,7 +475,7 @@ namespace Unity.MLAgents
         /// Initializes the agent. Can be safely called multiple times.
         /// </summary>
         /// <remarks>
-        /// This function calls your <seealso cref="Initialize"/> implementation, if one exists.
+        /// This function calls your <see cref="Initialize"/> implementation, if one exists.
         /// </remarks>
         public void LazyInitialize()
         {
@@ -685,9 +695,7 @@ namespace Unity.MLAgents
         /// <summary>
         /// Returns the current step counter (within the current episode).
         /// </summary>
-        /// <returns>
-        /// Current step count.
-        /// </returns>
+        /// <value>The current step count.</value>
         public int StepCount
         {
             get { return m_StepCount; }
@@ -697,9 +705,6 @@ namespace Unity.MLAgents
         /// Returns the number of episodes that the Agent has completed (either <see cref="Agent.EndEpisode()"/>
         /// was called, or maxSteps was reached).
         /// </summary>
-        /// <returns>
-        /// Current episode count.
-        /// </returns>
         public int CompletedEpisodes
         {
             get { return m_CompletedEpisodes; }
@@ -723,8 +728,8 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         /// </remarks>
         /// <param name="reward">The new value of the reward.</param>
         public void SetReward(float reward)
@@ -738,7 +743,7 @@ namespace Unity.MLAgents
         /// Increments the step and episode rewards by the provided value.
         /// </summary>
         /// <remarks>Use a positive reward to reinforce desired behavior. You can use a
-        /// negative reward to penalize mistakes. Use <seealso cref="SetReward(float)"/> to
+        /// negative reward to penalize mistakes. Use <see cref="SetReward(float)"/> to
         /// set the reward assigned to the current step with a specific value rather than
         /// increasing or decreasing it.
         ///
@@ -751,8 +756,8 @@ namespace Unity.MLAgents
         /// for information about mixing reward signals from curiosity and Generative Adversarial
         /// Imitation Learning (GAIL) with rewards supplied through this method.
         ///
-        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#rewards
-        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
+        /// [Agents - Rewards]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#rewards
+        /// [Reward Signals]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/ML-Agents-Overview.md#a-quick-note-on-reward-signals
         ///</remarks>
         /// <param name="increment">Incremental reward value.</param>
         public void AddReward(float increment)
@@ -822,7 +827,7 @@ namespace Unity.MLAgents
         /// <summary>
         /// Internal method to end the episode and reset the Agent.
         /// </summary>
-        /// <param name="reason"></param>
+        /// <param name="reason">reason to end the episode.</param>
         void EndEpisodeAndReset(DoneReason reason)
         {
             NotifyAgentDone(reason);
@@ -838,11 +843,11 @@ namespace Unity.MLAgents
         /// cannot use the decision every step, then you can request a decision less
         /// frequently.
         ///
-        /// You can add a <seealso cref="DecisionRequester"/> component to the agent's
+        /// You can add a <see cref="DecisionRequester"/> component to the agent's
         /// [GameObject] to drive the agent's decision making. When you use this component,
         /// do not call `RequestDecision()` separately.
         ///
-        /// Note that this function calls <seealso cref="RequestAction"/>; you do not need to
+        /// Note that this function calls <see cref="RequestAction"/>; you do not need to
         /// call both functions at the same time.
         ///
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
@@ -859,7 +864,7 @@ namespace Unity.MLAgents
         /// <remarks>
         /// Call `RequestAction()` to repeat the previous action returned by the agent's
         /// most recent decision. A new decision is not requested. When you call this function,
-        /// the Agent instance invokes <seealso cref="IActionReceiver.OnActionReceived"/> with the
+        /// the Agent instance invokes <see cref="IActionReceiver.OnActionReceived"/> with the
         /// existing action vector.
         ///
         /// You can use `RequestAction()` in situations where an agent must take an action
@@ -867,11 +872,11 @@ namespace Unity.MLAgents
         /// agent that moves through its environment might need to apply an action to keep
         /// moving, but only needs to make a decision to change course or speed occasionally.
         ///
-        /// You can add a <seealso cref="DecisionRequester"/> component to the agent's
+        /// You can add a <see cref="DecisionRequester"/> component to the agent's
         /// [GameObject] to drive the agent's decision making and action frequency. When you
         /// use this component, do not call `RequestAction()` separately.
         ///
-        /// Note that <seealso cref="RequestDecision"/> calls `RequestAction()`; you do not need to
+        /// Note that <see cref="RequestDecision"/> calls `RequestAction()`; you do not need to
         /// call both functions at the same time.
         ///
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
@@ -898,7 +903,7 @@ namespace Unity.MLAgents
         /// the Agent object needs references to other [GameObjects] in the scene, you
         /// can collect and store those references here.
         ///
-        /// Note that <seealso cref="OnEpisodeBegin"/> is called at the start of each of
+        /// Note that <see cref="OnEpisodeBegin"/> is called at the start of each of
         /// the agent's "episodes". You can use that function for items that need to be reset
         /// for each episode.
         ///
@@ -919,7 +924,7 @@ namespace Unity.MLAgents
         /// The same array will be reused between steps. It is up to the user to initialize
         /// the values on each call, for example by calling `Array.Clear(actionsOut, 0, actionsOut.Length);`.
         /// Add values to the array at the same indexes as they are used in your
-        /// <seealso cref="IActionReceiver.OnActionReceived"/> function, which receives this array and
+        /// <see cref="IActionReceiver.OnActionReceived"/> function, which receives this array and
         /// implements the corresponding agent behavior. See [Actions] for more information
         /// about agent actions.
         /// Note : Do not create a new float array of action in the `Heuristic()` method,
@@ -940,27 +945,29 @@ namespace Unity.MLAgents
         /// implementing a simple heuristic function can aid in debugging agent actions and interactions
         /// with its environment.
         ///
-        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
-        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Demonstration Recorder]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#recording-demonstrations
+        /// [Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
         /// </remarks>
         /// <example>
+        /// <para>
         /// The following example illustrates a `Heuristic()` function that provides WASD-style
         /// keyboard control for an agent that can move in two dimensions as well as jump. See
         /// [Input Manager] for more information about the built-in Unity input functions.
         /// You can also use the [Input System package], which provides a more flexible and
         /// configurable input system.
-        /// <code>
-        ///     public override void Heuristic(in ActionBuffers actionsOut)
-        ///     {
-        ///         var continuousActionsOut = actionsOut.ContinuousActions;
-        ///         continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        ///         continuousActionsOut[1] = Input.GetKey(KeyCode.Space) ? 1.0f : 0.0f;
-        ///         continuousActionsOut[2] = Input.GetAxis("Vertical");
-        ///     }
-        /// </code>
         /// [Input Manager]: https://docs.unity3d.com/Manual/class-InputManager.html
         /// [Input System package]: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/index.html
+        /// </para>
+        /// <code>
+        /// public override void Heuristic(in ActionBuffers actionsOut)
+        /// {
+        ///    var continuousActionsOut = actionsOut.ContinuousActions;
+        ///    continuousActionsOut[0] = Input.GetAxis("Horizontal");
+        ///    continuousActionsOut[1] = Input.GetKey(KeyCode.Space) ? 1.0f : 0.0f;
+        ///    continuousActionsOut[2] = Input.GetAxis("Vertical");
+        /// }
+        /// </code>
         /// </example>
         /// <param name="actionsOut">The <see cref="ActionBuffers"/> which contain the continuous and
         /// discrete action buffers to write to.</param>
@@ -1175,7 +1182,7 @@ namespace Unity.MLAgents
         /// implement a `CollectObservations()` function.
         ///
         /// Add vector observations to the <paramref name="sensor"/> parameter passed to
-        /// this method by calling the <seealso cref="VectorSensor"/> helper methods:
+        /// this method by calling the <see cref="VectorSensor"/> helper methods:
         ///     - <see cref="VectorSensor.AddObservation(int)"/>
         ///     - <see cref="VectorSensor.AddObservation(float)"/>
         ///     - <see cref="VectorSensor.AddObservation(Vector3)"/>
@@ -1196,7 +1203,7 @@ namespace Unity.MLAgents
         /// For more information about observations, see [Observations and Sensors].
         ///
         /// [GameObject]: https://docs.unity3d.com/Manual/GameObjects.html
-        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
+        /// [Observations and Sensors]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#observations-and-sensors
         /// </remarks>
         public virtual void CollectObservations(VectorSensor sensor)
         {
@@ -1238,7 +1245,7 @@ namespace Unity.MLAgents
         ///
         /// See [Agents - Actions] for more information on masking actions.
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#actions
         /// </remarks>
         /// <seealso cref="IActionReceiver.OnActionReceived"/>
         public virtual void WriteDiscreteActionMask(IDiscreteActionMask actionMask) { }
@@ -1248,7 +1255,8 @@ namespace Unity.MLAgents
         /// on the provided action.
         /// </summary>
         /// <remarks>
-        /// An action is passed to this function in the form of an  <seealso cref="ActionBuffers"/>.
+        /// <para>
+        /// An action is passed to this function in the form of an  <see cref="ActionBuffers"/>.
         /// Your implementation must use the array to direct the agent's behavior for the
         /// current step.
         ///
@@ -1258,7 +1266,7 @@ namespace Unity.MLAgents
         /// three values in ActionBuffers.ContinuousActions array to use as the force components.
         /// During training, the agent's  policy learns to set those particular elements of
         /// the array to maximize the training rewards the agent receives. (Of course,
-        /// if you implement a <seealso cref="Agent.Heuristic(in ActionBuffers)"/> function, it must use the same
+        /// if you implement a <see cref="Agent.Heuristic(in ActionBuffers)"/> function, it must use the same
         /// elements of the action array for the same purpose since there is no learning
         /// involved.)
         ///
@@ -1273,7 +1281,7 @@ namespace Unity.MLAgents
         /// When an agent uses discrete actions, the values in the ActionBuffers.DiscreteActions array
         /// are integers that each represent a specific, discrete action. For example,
         /// you could define a set of discrete actions such as:
-        ///
+        /// </para>
         /// <code>
         /// 0 = Do nothing
         /// 1 = Move one space left
@@ -1281,7 +1289,7 @@ namespace Unity.MLAgents
         /// 3 = Move one space up
         /// 4 = Move one space down
         /// </code>
-        ///
+        /// <para>
         /// When making a decision, the agent picks one of the five actions and puts the
         /// corresponding integer value in the ActionBuffers.DiscreteActions array. For example, if the agent
         /// decided to move left, the ActionBuffers.DiscreteActions parameter would be an array with
@@ -1304,7 +1312,8 @@ namespace Unity.MLAgents
         ///
         /// For more information about implementing agent actions see [Agents - Actions].
         ///
-        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_21_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// [Agents - Actions]: https://github.com/Unity-Technologies/ml-agents/blob/release_22_docs/docs/Learning-Environment-Design-Agents.md#actions
+        /// </para>
         /// </remarks>
         /// <param name="actions">
         /// Struct containing the buffers of actions to be executed at this step.

@@ -99,7 +99,7 @@ namespace Unity.MLAgents
         /// Get summaries for the observations in the AgentInfo part of the AgentInfoActionPairProto.
         /// </summary>
         /// <param name="infoActionPair"></param>
-        /// <returns></returns>
+        /// <returns>Summary of the observations.</returns>
         public static List<ObservationSummary> GetObservationSummaries(this AgentInfoActionPairProto infoActionPair)
         {
             List<ObservationSummary> summariesOut = new List<ObservationSummary>();
@@ -337,7 +337,7 @@ namespace Unity.MLAgents
         /// </summary>
         /// <param name="sensor"></param>
         /// <param name="observationWriter"></param>
-        /// <returns></returns>
+        /// <returns>`ObservationProto` for the sensor.</returns>
         public static ObservationProto GetObservationProto(this ISensor sensor, ObservationWriter observationWriter)
         {
             var obsSpec = sensor.GetObservationSpec();

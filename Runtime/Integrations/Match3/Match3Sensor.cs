@@ -8,8 +8,9 @@ namespace Unity.MLAgents.Integrations.Match3
     /// <summary>
     /// Delegate that provides integer values at a given (x,y) coordinate.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
+    /// <param name="x">X</param>
+    /// <param name="y">Y</param>
+    /// <returns>The integer value at the given (x,y) coordinate.</returns>
     public delegate int GridValueProvider(int x, int y);
 
     /// <summary>
@@ -89,7 +90,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <param name="board">The abstract board.</param>
         /// <param name="obsType">Whether to produce vector or visual observations</param>
         /// <param name="name">Name of the sensor.</param>
-        /// <returns></returns>
+        /// <returns>`Match3Sensor` that encodes the board cells as observations.</returns>
         public static Match3Sensor CellTypeSensor(AbstractBoard board, Match3ObservationType obsType, string name)
         {
             var maxBoardSize = board.GetMaxBoardSize();
@@ -103,7 +104,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <param name="board">The abstract board.</param>
         /// <param name="obsType">Whether to produce vector or visual observations</param>
         /// <param name="name">Name of the sensor.</param>
-        /// <returns></returns>
+        /// <returns>`Match3Sensor` that encodes the board cell special types as observations.</returns>
         public static Match3Sensor SpecialTypeSensor(AbstractBoard board, Match3ObservationType obsType, string name)
         {
             var maxBoardSize = board.GetMaxBoardSize();

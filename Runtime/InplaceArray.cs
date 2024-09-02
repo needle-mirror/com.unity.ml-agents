@@ -10,7 +10,7 @@ namespace Unity.MLAgents
     /// <remarks>
     /// This does not implement any interfaces such as IList, in order to avoid any accidental boxing allocations.
     /// </remarks>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">T</typeparam>
     public struct InplaceArray<T> : IEquatable<InplaceArray<T>> where T : struct
     {
         private const int k_MaxLength = 4;
@@ -24,7 +24,7 @@ namespace Unity.MLAgents
         /// <summary>
         /// Create a length-1 array.
         /// </summary>
-        /// <param name="elem0"></param>
+        /// <param name="elem0">Length of axis 0.</param>
         public InplaceArray(T elem0)
         {
             m_Length = 1;
@@ -37,8 +37,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Create a length-2 array.
         /// </summary>
-        /// <param name="elem0"></param>
-        /// <param name="elem1"></param>
+        /// <param name="elem0">Length of axis 0.</param>
+        /// <param name="elem1">Length of axis 1.</param>
         public InplaceArray(T elem0, T elem1)
         {
             m_Length = 2;
@@ -51,9 +51,9 @@ namespace Unity.MLAgents
         /// <summary>
         /// Create a length-3 array.
         /// </summary>
-        /// <param name="elem0"></param>
-        /// <param name="elem1"></param>
-        /// <param name="elem2"></param>
+        /// <param name="elem0">Length of axis 0.</param>
+        /// <param name="elem1">Length of axis 1.</param>
+        /// <param name="elem2">Length of axis 2.</param>
         public InplaceArray(T elem0, T elem1, T elem2)
         {
             m_Length = 3;
@@ -66,10 +66,10 @@ namespace Unity.MLAgents
         /// <summary>
         /// Create a length-3 array.
         /// </summary>
-        /// <param name="elem0"></param>
-        /// <param name="elem1"></param>
-        /// <param name="elem2"></param>
-        /// <param name="elem3"></param>
+        /// <param name="elem0">Length of axis 0.</param>
+        /// <param name="elem1">Length of axis 1.</param>
+        /// <param name="elem2">Length of axis 2.</param>
+        /// <param name="elem3">Length of axis 3.</param>
         public InplaceArray(T elem0, T elem1, T elem2, T elem3)
         {
             m_Length = 4;
@@ -83,9 +83,9 @@ namespace Unity.MLAgents
         /// Construct an InplaceArray from an IList (e.g. Array or List).
         /// The source must be non-empty and have at most 4 elements.
         /// </summary>
-        /// <param name="elems"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="elems">The `IList` to construct the array from.</param>
+        /// <returns>Corresponding `InplaceArray` from the input IList.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Argument out of range</exception>
         public static InplaceArray<T> FromList(IList<T> elems)
         {
             switch (elems.Count)
@@ -106,8 +106,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Per-element access.
         /// </summary>
-        /// <param name="index"></param>
-        /// <exception cref="IndexOutOfRangeException"></exception>
+        /// <param name="index">The index to get or set.</param>
+        /// <exception cref="IndexOutOfRangeException">Index out of range</exception>
         public T this[int index]
         {
             get
@@ -170,8 +170,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Returns a string representation of the array's elements.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
+        /// <returns>The string summary of the `InplaceArray`.</returns>
+        /// <exception cref="IndexOutOfRangeException">Index out of range</exception>
         public override string ToString()
         {
             switch (m_Length)
@@ -192,8 +192,8 @@ namespace Unity.MLAgents
         /// <summary>
         /// Check that the arrays have the same length and have all equal values.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="lhs">The first 'InplaceArray' to compare.</param>
+        /// <param name="rhs">The second 'InplaceArray' to compare.</param>
         /// <returns>Whether the arrays are equivalent.</returns>
         public static bool operator ==(InplaceArray<T> lhs, InplaceArray<T> rhs)
         {
@@ -203,22 +203,22 @@ namespace Unity.MLAgents
         /// <summary>
         /// Check that the arrays are not equivalent.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="lhs">The first 'InplaceArray' to compare.</param>
+        /// <param name="rhs">The second 'InplaceArray' to compare.</param>
         /// <returns>Whether the arrays are not equivalent</returns>
         public static bool operator !=(InplaceArray<T> lhs, InplaceArray<T> rhs) => !lhs.Equals(rhs);
 
         /// <summary>
         /// Check that the arrays are equivalent.
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">The other 'InplaceArray' to compare.</param>
         /// <returns>Whether the arrays are not equivalent</returns>
         public override bool Equals(object other) => other is InplaceArray<T> other1 && this.Equals(other1);
 
         /// <summary>
         /// Check that the arrays are equivalent.
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">The other 'InplaceArray' to compare.</param>
         /// <returns>Whether the arrays are not equivalent</returns>
         public bool Equals(InplaceArray<T> other)
         {
@@ -231,7 +231,7 @@ namespace Unity.MLAgents
         /// <summary>
         /// Get a hashcode for the array.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The hashcode of the `InplaceArray`.</returns>
         public override int GetHashCode()
         {
             return (m_Elem0, m_Elem1, m_Elem2, m_Elem3, Length).GetHashCode();

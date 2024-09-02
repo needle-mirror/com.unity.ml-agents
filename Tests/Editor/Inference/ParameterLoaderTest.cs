@@ -173,77 +173,81 @@ namespace Unity.MLAgents.Tests
             Assert.IsNotNull(hybridRecurrV2Model);
         }
 
+        [Test]
         public void TestGetInputTensorsContinuous()
         {
             var model = ModelLoader.Load(continuousONNXModel);
-            var inputNames = model.GetInputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var inputNames = modelInfo.InputNames;
             // Model should contain 3 inputs : vector, visual 1 and visual 2
             Assert.AreEqual(3, inputNames.Count());
             Assert.Contains(TensorNames.VectorObservationPlaceholder, inputNames);
             Assert.Contains(TensorNames.VisualObservationPlaceholderPrefix + "0", inputNames);
             Assert.Contains(TensorNames.VisualObservationPlaceholderPrefix + "1", inputNames);
 
-            Assert.AreEqual(2, model.GetNumVisualInputs());
+            Assert.AreEqual(2, modelInfo.NumVisualInputs);
 
-            // Test if the model is null
-            model = null;
-            Assert.AreEqual(0, model.GetInputTensors().Count);
-            Assert.AreEqual(0, model.GetNumVisualInputs());
+            modelInfo.Dispose();
         }
 
         public void TestGetInputTensorsDiscrete()
         {
             var model = ModelLoader.Load(discreteONNXModel);
-            var inputNames = model.GetInputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var inputNames = modelInfo.InputNames;
             // Model should contain 2 inputs : recurrent and visual 1
 
             Assert.Contains(TensorNames.VisualObservationPlaceholderPrefix + "0", inputNames);
             // TODO :There are some memory tensors as well
+            modelInfo.Dispose();
         }
 
         [Test]
         public void TestGetInputTensorsHybrid()
         {
             var model = ModelLoader.Load(hybridONNXModel);
-            var inputNames = model.GetInputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var inputNames = modelInfo.InputNames;
             Assert.Contains(TensorNames.VectorObservationPlaceholder, inputNames);
+            modelInfo.Dispose();
         }
 
         [Test]
         public void TestGetOutputTensorsContinuous()
         {
             var model = ModelLoader.Load(continuousONNXModel);
-            var outputNames = model.GetOutputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var outputNames = modelInfo.OutputNames;
             var actionOutputName = TensorNames.ContinuousActionOutput;
             Assert.Contains(actionOutputName, outputNames);
             Assert.AreEqual(1, outputNames.Count());
-
-            model = null;
-            Assert.AreEqual(0, model.GetOutputNames().Count());
+            modelInfo.Dispose();
         }
 
         [Test]
         public void TestGetOutputTensorsDiscrete()
         {
             var model = ModelLoader.Load(discreteONNXModel);
-            var outputNames = model.GetOutputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var outputNames = modelInfo.OutputNames;
             var actionOutputName = TensorNames.DiscreteActionOutput;
             Assert.Contains(actionOutputName, outputNames);
             // TODO : There are some memory tensors as well
+            modelInfo.Dispose();
         }
 
         [Test]
         public void TestGetOutputTensorsHybrid()
         {
             var model = ModelLoader.Load(hybridONNXModel);
-            var outputNames = model.GetOutputNames();
+            var modelInfo = new SentisModelInfo(model);
+            var outputNames = modelInfo.OutputNames;
 
             Assert.AreEqual(2, outputNames.Count());
             Assert.Contains(TensorNames.ContinuousActionOutput, outputNames);
             Assert.Contains(TensorNames.DiscreteActionOutput, outputNames);
 
-            model = null;
-            Assert.AreEqual(0, model.GetOutputNames().Count());
+            modelInfo.Dispose();
         }
 
         [Test]

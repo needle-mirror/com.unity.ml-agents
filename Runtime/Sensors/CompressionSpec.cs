@@ -72,7 +72,7 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Return a CompressionSpec indicating no compression. This is recommended for most sensors.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>`CompressionSpec` indicating no compression.</returns>
         public static CompressionSpec Default()
         {
             return new CompressionSpec
@@ -86,7 +86,7 @@ namespace Unity.MLAgents.Sensors
         /// Return whether the compressed channel mapping is "trivial"; if so it doesn't need to be sent to the
         /// trainer.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the compressed channel mapping is trivial, False if not.</returns>
         internal bool IsTrivialMapping()
         {
             var mapping = CompressedChannelMapping;

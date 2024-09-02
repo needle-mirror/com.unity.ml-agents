@@ -65,9 +65,9 @@ namespace Unity.MLAgents.Integrations.Match3
         /// the Move corresponding to an Agent decision.
         /// </summary>
         /// <param name="moveIndex">Must be between 0 and NumPotentialMoves(maxRows, maxCols).</param>
-        /// <param name="maxBoardSize"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="maxBoardSize">Max board size</param>
+        /// <returns>Corresponding `Move`.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Argument out of range</exception>
         public static Move FromMoveIndex(int moveIndex, BoardSize maxBoardSize)
         {
             var maxRows = maxBoardSize.Rows;
@@ -104,7 +104,7 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Increment the Move to the next MoveIndex, and update the Row, Column, and Direction accordingly.
         /// </summary>
-        /// <param name="maxBoardSize"></param>
+        /// <param name="maxBoardSize">Max board size</param>
         public void Next(BoardSize maxBoardSize)
         {
             var maxRows = maxBoardSize.Rows;
@@ -143,11 +143,11 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Construct a Move from the row, column, direction, and board size.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="dir"></param>
-        /// <param name="maxBoardSize"></param>
-        /// <returns></returns>
+        /// <param name="row">Row</param>
+        /// <param name="col">Col</param>
+        /// <param name="dir">Dir</param>
+        /// <param name="maxBoardSize">Max board size</param>
+        /// <returns>Corresponding `Move`.</returns>
         public static Move FromPositionAndDirection(int row, int col, Direction dir, BoardSize maxBoardSize)
         {
             // Check for out-of-bounds
@@ -208,8 +208,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// Check if the move is valid for the given board size.
         /// This will be passed the return value from AbstractBoard.GetCurrentBoardSize().
         /// </summary>
-        /// <param name="boardSize"></param>
-        /// <returns></returns>
+        /// <param name="boardSize">Board size</param>
+        /// <returns>True if move is valide given input `boardSize`, False if not.</returns>
         public bool InRangeForBoard(BoardSize boardSize)
         {
             var (otherRow, otherCol) = OtherCell();
@@ -222,8 +222,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Get the other row and column that correspond to this move.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns>Corresponding other (row, column) tuple for this move.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Argument out of range</exception>
         public (int Row, int Column) OtherCell()
         {
             switch (Direction)
@@ -244,8 +244,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// <summary>
         /// Get the opposite direction of this move.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns>Oposit `Direction` of this move.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Argument out of range</exception>
         public Direction OtherDirection()
         {
             switch (Direction)
@@ -267,8 +267,8 @@ namespace Unity.MLAgents.Integrations.Match3
         /// Return the number of potential moves for a board of the given size.
         /// This is equivalent to the number of internal edges in the board.
         /// </summary>
-        /// <param name="maxBoardSize"></param>
-        /// <returns></returns>
+        /// <param name="maxBoardSize">Max board size</param>
+        /// <returns>Number of potential moves given a boardsize.</returns>
         public static int NumPotentialMoves(BoardSize maxBoardSize)
         {
             return maxBoardSize.Rows * (maxBoardSize.Columns - 1) + (maxBoardSize.Rows - 1) * (maxBoardSize.Columns);

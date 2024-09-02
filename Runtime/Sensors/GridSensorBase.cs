@@ -189,16 +189,18 @@ namespace Unity.MLAgents.Sensors
         /// Default is to record the detected tag index.
         ///
         /// This method can be overridden to encode the observation differently or get custom data from the object.
-        /// When overriding this method, <seealso cref="GetCellObservationSize"/> and <seealso cref="IsDataNormalized"/>
+        /// When overriding this method, <see cref="GetCellObservationSize"/> and <see cref="IsDataNormalized"/>
         /// might also need to change accordingly.
         /// </summary>
         /// <param name="detectedObject">The game object that was detected within a certain cell</param>
         /// <param name="tagIndex">The index of the detectedObject's tag in the DetectableObjects list</param>
         /// <param name="dataBuffer">The buffer to write the observation values.
-        ///         The buffer size is configured by <seealso cref="GetCellObservationSize"/>.
+        ///         The buffer size is configured by <see cref="GetCellObservationSize"/>.
         /// </param>
         /// <example>
+        /// <para>
         ///   Here is an example of overriding GetObjectData to get the velocity of a potential Rigidbody:
+        /// </para>
         ///   <code>
         ///     protected override void GetObjectData(GameObject detectedObject, int tagIndex, float[] dataBuffer)
         ///     {
@@ -218,8 +220,8 @@ namespace Unity.MLAgents.Sensors
         }
 
         /// <summary>
-        /// Get the observation size for each cell. This will be the size of dataBuffer for <seealso cref="GetObjectData"/>.
-        /// If overriding <seealso cref="GetObjectData"/>, override this method as well to the custom observation size.
+        /// Get the observation size for each cell. This will be the size of dataBuffer for <see cref="GetObjectData"/>.
+        /// If overriding <see cref="GetObjectData"/>, override this method as well to the custom observation size.
         /// </summary>
         /// <returns>The observation size of each cell.</returns>
         protected virtual int GetCellObservationSize()
@@ -229,7 +231,7 @@ namespace Unity.MLAgents.Sensors
 
         /// <summary>
         /// Whether the data is normalized within [0, 1]. The sensor can only use PNG compression if the data is normailzed.
-        /// If overriding <seealso cref="GetObjectData"/>, override this method as well according to the custom observation values.
+        /// If overriding <see cref="GetObjectData"/>, override this method as well according to the custom observation values.
         /// </summary>
         /// <returns>Bool value indicating whether data is normalized.</returns>
         protected virtual bool IsDataNormalized()
@@ -239,7 +241,7 @@ namespace Unity.MLAgents.Sensors
 
         /// <summary>
         /// Whether to process all detected colliders in a cell. Default to false and only use the one closest to the agent.
-        /// If overriding <seealso cref="GetObjectData"/>, consider override this method when needed.
+        /// If overriding <see cref="GetObjectData"/>, consider override this method when needed.
         /// </summary>
         /// <returns>Bool value indicating whether to process all detected colliders in a cell.</returns>
         protected internal virtual ProcessCollidersMethod GetProcessCollidersMethod()

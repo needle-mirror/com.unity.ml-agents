@@ -111,7 +111,7 @@ namespace Unity.MLAgents.SideChannels
         /// </summary>
         /// <param name="key">Parameter key.</param>
         /// <param name="defaultValue">Default value to return.</param>
-        /// <returns></returns>
+        /// <returns>The parameter value associated with the provided key.</returns>
         public float GetWithDefault(string key, float defaultValue)
         {
             Func<float> valueOut;
@@ -133,7 +133,7 @@ namespace Unity.MLAgents.SideChannels
         /// <summary>
         /// Returns all parameter keys that have a registered value.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All parameter keys that have a registered value.</returns>
         public IList<string> ListParameters()
         {
             return new List<string>(m_Parameters.Keys);

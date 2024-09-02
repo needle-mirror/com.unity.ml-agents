@@ -152,7 +152,7 @@ namespace Unity.MLAgents.Sensors
         /// <param name="cellCenter"></param>
         /// <param name="halfCellScale"></param>
         /// <param name="rotation"></param>
-        /// <returns></returns>
+        /// <returns>Found number of overlapping boxes.</returns>
         int BufferResizingOverlapBoxNonAlloc(Vector3 cellCenter, Vector3 halfCellScale, Quaternion rotation)
         {
             int numFound;

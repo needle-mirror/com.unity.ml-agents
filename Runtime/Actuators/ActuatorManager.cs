@@ -22,7 +22,7 @@ namespace Unity.MLAgents.Actuators
         /// <summary>
         /// Flag used to check if our IActuators are ready for execution.
         /// </summary>
-        /// <seealso cref="ReadyActuatorsForExecution(IList{IActuator}, int, int, int)"/>
+        /// <see cref="ReadyActuatorsForExecution(IList{IActuator}, int, int, int)"/>
         bool m_ReadyForExecution;
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Unity.MLAgents.Actuators
         /// <summary>
         /// Returns an ActionSpec representing the concatenation of all IActuator's ActionSpecs
         /// </summary>
-        /// <returns></returns>
+        /// <returns>`ActionSpec` representing the concatenation of all `ActionSpec`s.</returns>
         public ActionSpec GetCombinedActionSpec()
         {
             ReadyActuatorsForExecution();

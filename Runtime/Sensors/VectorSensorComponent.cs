@@ -64,7 +64,7 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Creates a VectorSensor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>`ISensor` array.</returns>
         public override ISensor[] CreateSensors()
         {
             m_Sensor = new VectorSensor(m_ObservationSize, m_SensorName, m_ObservationType);
@@ -78,7 +78,7 @@ namespace Unity.MLAgents.Sensors
         /// <summary>
         /// Returns the underlying VectorSensor
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Underlying `VectorSensor`.</returns>
         public VectorSensor GetSensor()
         {
             return m_Sensor;

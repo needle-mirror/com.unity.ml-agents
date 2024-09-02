@@ -79,7 +79,7 @@ namespace Unity.MLAgents
         public double TotalSeconds
         {
             get { return CurrentTicks * s_TicksToSeconds; }
-            set { }     // Serialization needs this, but unused.
+            set { }      // Serialization needs this, but unused.
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Unity.MLAgents
                 var selfTicks = Mathf.Max(0, CurrentTicks - totalChildTicks);
                 return selfTicks * s_TicksToSeconds;
             }
-            set { }     // Serialization needs this, but unused.
+            set { }      // Serialization needs this, but unused.
         }
 
         public IReadOnlyDictionary<string, TimerNode> Children
@@ -160,7 +160,7 @@ namespace Unity.MLAgents
         /// Note that these allocations only happen once for a given timed block.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
+        /// <returns>The `TimerNode` child node.</returns>
         public TimerNode GetChild(string name)
         {
             // Lazily create the children dictionary.
@@ -185,7 +185,7 @@ namespace Unity.MLAgents
         /// </summary>
         /// <param name="parentName"></param>
         /// <param name="level"></param>
-        /// <returns></returns>
+        /// <returns>The string summary of the `TimerNode`.</returns>
         public string DebugGetTimerString(string parentName = "", int level = 0)
         {
             var indent = new string(' ', 2 * level); // TODO generalize
@@ -456,7 +456,7 @@ namespace Unity.MLAgents
         /// Start a scoped timer. This should be used with the "using" statement.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
+        /// <returns>`TimerStack` scoped timer.</returns>
         public TimerStack Scoped(string name)
         {
             Push(name);
@@ -478,7 +478,7 @@ namespace Unity.MLAgents
         /// Get a string representation of the timers.
         /// Potentially slow so call sparingly.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The string summary of the `TimerStack`.</returns>
         internal string DebugGetTimerString()
         {
             return m_RootNode.DebugGetTimerString();

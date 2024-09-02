@@ -67,7 +67,7 @@ namespace Unity.MLAgents.SideChannels
         /// </summary>
         /// <param name="key"> The string identifier of the property.</param>
         /// <param name="defaultValue"> The default value of the property.</param>
-        /// <returns></returns>
+        /// <returns>The parameter value associated with the provided key.</returns>
         public float GetWithDefault(string key, float defaultValue)
         {
             float valueOut;

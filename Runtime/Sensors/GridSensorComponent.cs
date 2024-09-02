@@ -15,6 +15,9 @@ namespace Unity.MLAgents.Sensors
         List<GridSensorBase> m_Sensors;
         internal IGridPerception m_GridPerception;
 
+        /// <summary>
+        /// Name of the generated <see cref="GridSensorBase"/> object.
+        /// </summary>
         [HideInInspector, SerializeField]
         protected internal string m_SensorName = "GridSensor";
         /// <summary>

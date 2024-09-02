@@ -20,7 +20,7 @@ namespace Unity.MLAgents.Sensors
         /// </summary>
         /// <param name="observationSize">Number of vector observations.</param>
         /// <param name="name">Name of the sensor.</param>
-        /// <param name="observationType"></param>
+        /// <param name="observationType">Observation type</param>
         public VectorSensor(int observationSize, string name = null, ObservationType observationType = ObservationType.Default)
         {
             if (string.IsNullOrEmpty(name))

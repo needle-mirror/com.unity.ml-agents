@@ -26,7 +26,7 @@ namespace Unity.MLAgents.Demonstrations
         /// Create a DemonstrationWriter that will write to the specified stream.
         /// The stream must support writes and seeking.
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="stream">Target stream</param>
         public DemonstrationWriter(Stream stream)
         {
             m_Writer = stream;

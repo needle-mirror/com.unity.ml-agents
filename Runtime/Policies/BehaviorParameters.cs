@@ -63,7 +63,7 @@ namespace Unity.MLAgents.Policies
     }
 
     /// <summary>
-    /// A component for setting an <seealso cref="Agent"/> instance's behavior and
+    /// A component for setting an <see cref="Agent"/> instance's behavior and
     /// brain properties.
     /// </summary>
     /// <remarks>At runtime, this component generates the agent's policy objects

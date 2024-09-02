@@ -49,7 +49,7 @@ namespace Unity.MLAgents.Sensors
         /// <param name="detectedObject">The game object that was detected within a certain cell</param>
         /// <param name="tagIndex">The index of the detectedObject's tag in the DetectableObjects list</param>
         /// <param name="dataBuffer">The buffer to write the observation values.
-        ///         The buffer size is configured by <seealso cref="GetCellObservationSize"/>.
+        ///         The buffer size is configured by <see cref="GetCellObservationSize"/>.
         /// </param>
         protected override void GetObjectData(GameObject detectedObject, int tagIndex, float[] dataBuffer)
         {

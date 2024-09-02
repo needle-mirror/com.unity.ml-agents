@@ -95,7 +95,6 @@ namespace Unity.MLAgents.Analytics
         /// <param name="sensors">List of ISensors for the Agent. Used to generate information about the observation space.</param>
         /// <param name="actionSpec">ActionSpec for the Agent. Used to generate information about the action space.</param>
         /// <param name="actuators">List of IActuators for the Agent. Used to generate information about the action space.</param>
-        /// <returns></returns>
         [Conditional("MLA_UNITY_ANALYTICS_MODULE")]
         public static void InferenceModelSet(
             ModelAsset nnModel,
@@ -142,7 +141,7 @@ namespace Unity.MLAgents.Analytics
         /// <param name="sensors"></param>
         /// <param name="actionSpec"></param>
         /// <param name="actuators"></param>
-        /// <returns></returns>
+        /// <returns>`InferenceEvent` from the input model.</returns>
         internal static InferenceEvent GetEventForModel(
             ModelAsset nnModel,
             string behaviorName,
@@ -153,15 +152,15 @@ namespace Unity.MLAgents.Analytics
         )
         {
             var sentisModel = ModelLoader.Load(nnModel);
+            using var sentisModelInfo = new SentisModelInfo(sentisModel);
             var inferenceEvent = new InferenceEvent();
 
             // Hash the behavior name so that there's no concern about PII or "secret" data being leaked.
             inferenceEvent.BehaviorName = AnalyticsUtils.Hash(k_VendorKey, behaviorName);
 
-            inferenceEvent.SentisModelSource = sentisModel.IrSource;
-            inferenceEvent.SentisModelVersion = sentisModel.IrVersion;
+            inferenceEvent.SentisModelVersion = sentisModelInfo.Version;
             inferenceEvent.SentisModelProducer = sentisModel.ProducerName;
-            inferenceEvent.MemorySize = (int)((TensorFloat)sentisModel.GetTensorByName(TensorNames.MemorySize))[0];
+            inferenceEvent.MemorySize = sentisModelInfo.MemorySize;
             inferenceEvent.InferenceDevice = (int)inferenceDevice;
 
             // TODO deprecate tensorflow conversion
@@ -203,13 +202,13 @@ namespace Unity.MLAgents.Analytics
         /// and the calculations are the same.
         /// </summary>
         /// <param name="sentisModel"></param>
-        /// <returns></returns>
+        /// <returns>The total model weight size in bytes.</returns>
         static long GetModelWeightSize(Model sentisModel)
         {
             long totalWeightsSizeInBytes = 0;
             for (var c = 0; c < sentisModel.constants.Count; c++)
             {
-                totalWeightsSizeInBytes += sentisModel.constants[c].length;
+                totalWeightsSizeInBytes += sentisModel.constants[c].lengthBytes;
             }
             return totalWeightsSizeInBytes;
         }
@@ -260,19 +259,14 @@ namespace Unity.MLAgents.Analytics
         /// This increases the chance of a collision, but this should still be extremely rare.
         /// </summary>
         /// <param name="sentisModel"></param>
-        /// <returns></returns>
+        /// <returns>The hash of the model's layer data.</returns>
         static string GetModelHash(Model sentisModel)
         {
             var hash = new MLAgentsHash128();
 
-            // Limit the max number of float bytes that we hash for performance.
-            const int kMaxFloats = 256;
-
             foreach (var constant in sentisModel.constants)
             {
-                hash.Append(constant.name);
-                var numFloatsToHash = Mathf.Min(constant.weights.Length, kMaxFloats);
-                hash.Append(constant.weights.ToString());
+                hash.Append(constant.ToString());
             }
 
             return hash.ToString();

@@ -14,16 +14,11 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class BiDimensionalOutputGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
-
-        public BiDimensionalOutputGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public BiDimensionalOutputGenerator() { }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
         }
     }
 
@@ -33,24 +28,16 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class BatchSizeGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
-
-        public BatchSizeGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public BatchSizeGenerator() { }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
             tensorProxy.data?.Dispose();
             var newTensorShape = new TensorShape(1, 1);
             tensorProxy.data = TensorUtils.CreateEmptyTensor(newTensorShape, tensorProxy.DType);
-            if (tensorProxy.Device == DeviceType.GPU)
-            {
-                tensorProxy.data.MakeReadable();
-            }
+            tensorProxy.data.CompleteAllPendingOperations();
 
-            ((TensorInt)tensorProxy.data)[0] = batchSize;
+            ((Tensor<int>)tensorProxy.data)[0] = batchSize;
         }
     }
 
@@ -62,20 +49,17 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class SequenceLengthGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
-
-        public SequenceLengthGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public SequenceLengthGenerator() { }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            tensorProxy.shape = new long[0];
+            tensorProxy.shape = Array.Empty<int>();
             tensorProxy.data?.Dispose();
             var newTensorShape = new TensorShape(1, 1);
             tensorProxy.data = TensorUtils.CreateEmptyTensor(newTensorShape, tensorProxy.DType);
-            ((TensorInt)tensorProxy.data)[0] = 1;
+            tensorProxy.data.CompleteAllPendingOperations();
+
+            ((Tensor<int>)tensorProxy.data)[0] = 1;
         }
     }
 
@@ -87,25 +71,25 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class RecurrentInputGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
         Dictionary<int, List<float>> m_Memories;
 
         public RecurrentInputGenerator(
-            ITensorAllocator allocator,
             Dictionary<int, List<float>> memories)
         {
-            m_Allocator = allocator;
             m_Memories = memories;
         }
 
         public void Generate(
             TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
 
             var memorySize = tensorProxy.data.Width();
 
+            tensorProxy.data.CompleteAllPendingOperations();
+
             var agentIndex = 0;
+
             for (var infoIndex = 0; infoIndex < infos.Count; infoIndex++)
             {
                 var infoSensorPair = infos[infoIndex];
@@ -119,14 +103,10 @@ namespace Unity.MLAgents.Inference
 
                 if (!m_Memories.TryGetValue(info.episodeId, out memory))
                 {
-                    if (tensorProxy.Device == DeviceType.GPU)
-                    {
-                        tensorProxy.data.MakeReadable();
-                    }
 
                     for (var j = 0; j < memorySize; j++)
                     {
-                        ((TensorFloat)tensorProxy.data)[agentIndex, 0, j] = 0;
+                        ((Tensor<float>)tensorProxy.data)[agentIndex, 0, j] = 0;
                     }
 
                     agentIndex++;
@@ -140,12 +120,7 @@ namespace Unity.MLAgents.Inference
                         break;
                     }
 
-                    if (tensorProxy.Device == DeviceType.GPU)
-                    {
-                        tensorProxy.data.MakeReadable();
-                    }
-
-                    ((TensorFloat)tensorProxy.data)[agentIndex, 0, j] = memory[j];
+                    ((Tensor<float>)tensorProxy.data)[agentIndex, 0, j] = memory[j];
                 }
 
                 agentIndex++;
@@ -161,16 +136,12 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class PreviousActionInputGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
-
-        public PreviousActionInputGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public PreviousActionInputGenerator() { }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
+            tensorProxy.data.CompleteAllPendingOperations();
 
             var actionSize = tensorProxy.shape[tensorProxy.shape.Length - 1];
             var agentIndex = 0;
@@ -183,7 +154,7 @@ namespace Unity.MLAgents.Inference
                 {
                     for (var j = 0; j < actionSize; j++)
                     {
-                        ((TensorInt)tensorProxy.data)[agentIndex, j] = pastAction[j];
+                        ((Tensor<int>)tensorProxy.data)[agentIndex, j] = pastAction[j];
                     }
                 }
 
@@ -200,16 +171,13 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class ActionMaskInputGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
-
-        public ActionMaskInputGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public ActionMaskInputGenerator() { }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
+
+            tensorProxy.data.CompleteAllPendingOperations();
 
             var maskSize = tensorProxy.shape[tensorProxy.shape.Length - 1];
             var agentIndex = 0;
@@ -218,15 +186,11 @@ namespace Unity.MLAgents.Inference
                 var infoSensorPair = infos[infoIndex];
                 var agentInfo = infoSensorPair.agentInfo;
                 var maskList = agentInfo.discreteActionMasks;
-                if (tensorProxy.Device == DeviceType.GPU)
-                {
-                    tensorProxy.data.MakeReadable();
-                }
 
                 for (var j = 0; j < maskSize; j++)
                 {
                     var isUnmasked = (maskList != null && maskList[j]) ? 0.0f : 1.0f;
-                    ((TensorFloat)tensorProxy.data)[agentIndex, j] = isUnmasked;
+                    ((Tensor<float>)tensorProxy.data)[agentIndex, j] = isUnmasked;
                 }
 
                 agentIndex++;
@@ -242,17 +206,15 @@ namespace Unity.MLAgents.Inference
     internal class RandomNormalInputGenerator : TensorGenerator.IGenerator
     {
         readonly RandomNormal m_RandomNormal;
-        readonly ITensorAllocator m_Allocator;
 
-        public RandomNormalInputGenerator(int seed, ITensorAllocator allocator)
+        public RandomNormalInputGenerator(int seed)
         {
             m_RandomNormal = new RandomNormal(seed);
-            m_Allocator = allocator;
         }
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
             TensorUtils.FillTensorWithRandomNormal(tensorProxy, m_RandomNormal);
         }
     }
@@ -265,14 +227,10 @@ namespace Unity.MLAgents.Inference
     /// </summary>
     internal class ObservationGenerator : TensorGenerator.IGenerator
     {
-        readonly ITensorAllocator m_Allocator;
         List<int> m_SensorIndices = new List<int>();
         ObservationWriter m_ObservationWriter = new ObservationWriter();
 
-        public ObservationGenerator(ITensorAllocator allocator)
-        {
-            m_Allocator = allocator;
-        }
+        public ObservationGenerator() { }
 
         public void AddSensorIndex(int sensorIndex)
         {
@@ -281,7 +239,7 @@ namespace Unity.MLAgents.Inference
 
         public void Generate(TensorProxy tensorProxy, int batchSize, IList<AgentInfoSensorsPair> infos)
         {
-            TensorUtils.ResizeTensor(tensorProxy, batchSize, m_Allocator);
+            TensorUtils.ResizeTensor(tensorProxy, batchSize);
             var agentIndex = 0;
             for (var infoIndex = 0; infoIndex < infos.Count; infoIndex++)
             {

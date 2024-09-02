@@ -69,9 +69,9 @@ namespace Unity.MLAgents.Inference
         /// The Sentis engine model for loading static parameters
         /// </param>
         /// <returns>A FailedCheck containing the error message if the version of the model does not mach, else null</returns>
-        public static FailedCheck CheckModelVersion(Model model)
+        public static FailedCheck CheckModelVersion(SentisModelInfo modelInfo)
         {
-            var modelApiVersion = model.GetVersion();
+            var modelApiVersion = modelInfo.Version;
             if (modelApiVersion < (int)ModelApiVersion.MinSupportedVersion)
             {
                 return FailedCheck.Error(
@@ -90,7 +90,7 @@ namespace Unity.MLAgents.Inference
                 );
             }
 
-            var memorySize = (int)((TensorFloat)model.GetTensorByName(TensorNames.MemorySize))[0];
+            var memorySize = modelInfo.MemorySize;
 
             if (modelApiVersion == (int)ModelApiVersion.MLAgents1_0 && memorySize > 0)
             {
@@ -148,21 +148,21 @@ namespace Unity.MLAgents.Inference
                 failedModelChecks.Add(FailedCheck.Info(errorMsg));
                 return failedModelChecks;
             }
-
-            var hasExpectedTensors = model.CheckExpectedTensors(failedModelChecks, deterministicInference);
+            using var modelInfo = new SentisModelInfo(model, deterministicInference);
+            var hasExpectedTensors = modelInfo.CheckExpectedTensors(failedModelChecks);
             if (!hasExpectedTensors)
             {
                 return failedModelChecks;
             }
 
-            var modelApiVersion = model.GetVersion();
-            var versionCheck = CheckModelVersion(model);
+            var modelApiVersion = modelInfo.Version;
+            var versionCheck = CheckModelVersion(modelInfo);
             if (versionCheck != null)
             {
                 failedModelChecks.Add(versionCheck);
             }
 
-            var memorySize = (int)((TensorFloat)model.GetTensorByName(TensorNames.MemorySize))[0];
+            var memorySize = modelInfo.MemorySize;
             if (memorySize == -1)
             {
                 failedModelChecks.Add(FailedCheck.Warning($"Missing node in the model provided : {TensorNames.MemorySize}"
@@ -224,8 +224,9 @@ namespace Unity.MLAgents.Inference
             ISensor[] sensors
         )
         {
+            using var modelInfo = new SentisModelInfo(model);
             var failedModelChecks = new List<FailedCheck>();
-            var tensorsNames = model.GetInputNames();
+            var tensorsNames = modelInfo.InputNames;
 
             // If there is no Vector Observation Input but the Brain Parameters expect one.
             if ((brainParameters.VectorObservationSize != 0) &&
@@ -268,7 +269,7 @@ namespace Unity.MLAgents.Inference
                 }
             }
 
-            var expectedVisualObs = model.GetNumVisualInputs();
+            var expectedVisualObs = modelInfo.NumVisualInputs;
             // Check if there's not enough visual sensors (too many would be handled above)
             if (expectedVisualObs > visObsIndex)
             {
@@ -291,7 +292,7 @@ namespace Unity.MLAgents.Inference
             }
 
             // If the model uses discrete control but does not have an input for action masks
-            if (model.HasDiscreteOutputs())
+            if (modelInfo.HasDiscreteOutputs)
             {
                 if (!tensorsNames.Contains(TensorNames.ActionMaskPlaceholder))
                 {
@@ -330,8 +331,9 @@ namespace Unity.MLAgents.Inference
             bool deterministicInference = false
         )
         {
+            using var modelInfo = new SentisModelInfo(model);
             var failedModelChecks = new List<FailedCheck>();
-            var tensorsNames = model.GetInputNames();
+            var tensorsNames = modelInfo.InputNames;
             for (var sensorIndex = 0; sensorIndex < sensors.Length; sensorIndex++)
             {
                 if (!tensorsNames.Contains(
@@ -348,7 +350,7 @@ namespace Unity.MLAgents.Inference
             // If the model has a non-negative memory size but requires a recurrent input
             if (memory > 0)
             {
-                var modelVersion = model.GetVersion();
+                var modelVersion = modelInfo.Version;
                 if (!tensorsNames.Any(x => x == TensorNames.RecurrentInPlaceholder))
                 {
                     failedModelChecks.Add(
@@ -358,7 +360,7 @@ namespace Unity.MLAgents.Inference
             }
 
             // If the model uses discrete control but does not have an input for action masks
-            if (model.HasDiscreteOutputs(deterministicInference))
+            if (modelInfo.HasDiscreteOutputs)
             {
                 if (!tensorsNames.Contains(TensorNames.ActionMaskPlaceholder))
                 {
@@ -385,12 +387,13 @@ namespace Unity.MLAgents.Inference
         /// </returns>
         static IEnumerable<FailedCheck> CheckOutputTensorPresence(Model model, int memory, bool deterministicInference = false)
         {
+            using var modelInfo = new SentisModelInfo(model, deterministicInference);
             var failedModelChecks = new List<FailedCheck>();
 
             // If there is no Recurrent Output but the model is Recurrent.
             if (memory > 0)
             {
-                var allOutputs = model.GetOutputNames(deterministicInference).ToList();
+                var allOutputs = modelInfo.OutputNames.ToList();
                 if (!allOutputs.Any(x => x == TensorNames.RecurrentOutput))
                 {
                     failedModelChecks.Add(
@@ -516,6 +519,7 @@ namespace Unity.MLAgents.Inference
             Model model, BrainParameters brainParameters, ISensor[] sensors,
             int observableAttributeTotalSize)
         {
+            using var modelInfo = new SentisModelInfo(model);
             var failedModelChecks = new List<FailedCheck>();
             var tensorTester =
                 new Dictionary<string, Func<BrainParameters, TensorProxy, ISensor[], int, FailedCheck>>()
@@ -551,7 +555,7 @@ namespace Unity.MLAgents.Inference
             }
 
             // If the model expects an input but it is not in this list
-            foreach (var tensor in model.GetInputTensors())
+            foreach (var tensor in modelInfo.GetInputTensors())
             {
                 if (!tensorTester.ContainsKey(tensor.name))
                 {
@@ -654,6 +658,7 @@ namespace Unity.MLAgents.Inference
             Model model, BrainParameters brainParameters, ISensor[] sensors,
             int observableAttributeTotalSize)
         {
+            using var modelInfo = new SentisModelInfo(model);
             var failedModelChecks = new List<FailedCheck>();
             var tensorTester =
                 new Dictionary<string, Func<BrainParameters, TensorProxy, ISensor[], int, FailedCheck>>()
@@ -691,7 +696,7 @@ namespace Unity.MLAgents.Inference
             }
 
             // If the model expects an input but it is not in this list
-            foreach (var tensor in model.GetInputTensors())
+            foreach (var tensor in modelInfo.GetInputTensors())
             {
                 if (!tensorTester.ContainsKey(tensor.name))
                 {
@@ -758,25 +763,26 @@ namespace Unity.MLAgents.Inference
             BrainParameters brainParameters,
             ActuatorComponent[] actuatorComponents)
         {
+            using var modelInfo = new SentisModelInfo(model);
             var failedModelChecks = new List<FailedCheck>();
 
             // If the model expects an output but it is not in this list
-            var modelContinuousActionSize = model.ContinuousOutputSize();
+            var modelContinuousActionSize = modelInfo.ContinuousOutputSize;
             var continuousError = CheckContinuousActionOutputShape(brainParameters, actuatorComponents, modelContinuousActionSize);
             if (continuousError != null)
             {
                 failedModelChecks.Add(continuousError);
             }
             FailedCheck discreteError = null;
-            var modelApiVersion = model.GetVersion();
+            var modelApiVersion = modelInfo.Version;
             if (modelApiVersion == (int)ModelApiVersion.MLAgents1_0)
             {
-                var modelSumDiscreteBranchSizes = model.DiscreteOutputSize();
+                var modelSumDiscreteBranchSizes = modelInfo.DiscreteOutputSize;
                 discreteError = CheckDiscreteActionOutputShapeLegacy(brainParameters, actuatorComponents, modelSumDiscreteBranchSizes);
             }
             if (modelApiVersion == (int)ModelApiVersion.MLAgents2_0)
             {
-                var modelDiscreteBranches = (TensorFloat)model.GetTensorByName(TensorNames.DiscreteActionOutputShape);
+                var modelDiscreteBranches = modelInfo.GetDiscreteActionOutputShape();
                 discreteError = CheckDiscreteActionOutputShape(brainParameters, actuatorComponents, modelDiscreteBranches);
             }
 
@@ -784,6 +790,7 @@ namespace Unity.MLAgents.Inference
             {
                 failedModelChecks.Add(discreteError);
             }
+
             return failedModelChecks;
         }
 
@@ -802,7 +809,7 @@ namespace Unity.MLAgents.Inference
         /// check failed. If the check passed, returns null.
         /// </returns>
         static FailedCheck CheckDiscreteActionOutputShape(
-            BrainParameters brainParameters, ActuatorComponent[] actuatorComponents, TensorFloat modelDiscreteBranches)
+            BrainParameters brainParameters, ActuatorComponent[] actuatorComponents, Tensor<float> modelDiscreteBranches)
         {
             var discreteActionBranches = brainParameters.ActionSpec.BranchSizes.ToList();
             foreach (var actuatorComponent in actuatorComponents)

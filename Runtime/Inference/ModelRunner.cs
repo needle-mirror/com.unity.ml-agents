@@ -19,15 +19,13 @@ namespace Unity.MLAgents.Inference
         Dictionary<int, ActionBuffers> m_LastActionsReceived = new Dictionary<int, ActionBuffers>();
         List<int> m_OrderedAgentsRequestingDecisions = new List<int>();
 
-        ITensorAllocator m_TensorAllocator;
         TensorGenerator m_TensorGenerator;
         TensorApplier m_TensorApplier;
 
         ModelAsset m_Model;
         string m_ModelName;
         InferenceDevice m_InferenceDevice;
-        IWorker m_Engine;
-        bool m_Verbose = false;
+        Worker m_Engine;
         bool m_DeterministicInference;
         string[] m_OutputNames;
         IReadOnlyList<TensorProxy> m_InferenceInputs;
@@ -61,11 +59,11 @@ namespace Unity.MLAgents.Inference
             bool deterministicInference = false)
         {
             Model sentisModel;
+            SentisModelInfo sentisModelInfo;
             m_Model = model;
             m_ModelName = model?.name;
             m_InferenceDevice = inferenceDevice;
             m_DeterministicInference = deterministicInference;
-            m_TensorAllocator = new TensorCachingAllocator();
             if (model != null)
             {
 #if SENTIS_VERBOSE
@@ -76,9 +74,10 @@ namespace Unity.MLAgents.Inference
                 // D.logEnabled = m_Verbose;
 
                 sentisModel = ModelLoader.Load(model);
+                sentisModelInfo = new SentisModelInfo(sentisModel, deterministicInference);
 
                 var failedCheck = SentisModelParamLoader.CheckModelVersion(
-                    sentisModel
+                    sentisModelInfo
                 );
                 if (failedCheck != null)
                 {
@@ -106,23 +105,28 @@ namespace Unity.MLAgents.Inference
                         executionDevice = BackendType.CPU;
                         break;
                 }
-                m_Engine = WorkerFactory.CreateWorker(executionDevice, sentisModel, m_Verbose);
+                m_Engine = new Worker(sentisModel, executionDevice);
             }
             else
             {
                 sentisModel = null;
+                sentisModelInfo = null;
                 m_Engine = null;
             }
 
-            m_InferenceInputs = sentisModel.GetInputTensors();
-            m_OutputNames = sentisModel.GetOutputNames(m_DeterministicInference);
+            if (sentisModelInfo != null)
+            {
+                m_InferenceInputs = sentisModelInfo.GetInputTensors();
+                m_OutputNames = sentisModelInfo.OutputNames;
+            }
 
             m_TensorGenerator = new TensorGenerator(
-                seed, m_TensorAllocator, m_Memories, sentisModel, m_DeterministicInference);
+                seed, m_Memories, sentisModel, m_DeterministicInference);
             m_TensorApplier = new TensorApplier(
-                actionSpec, seed, m_TensorAllocator, m_Memories, sentisModel, m_DeterministicInference);
+                actionSpec, seed, m_Memories, sentisModel, m_DeterministicInference);
             m_InputsByName = new Dictionary<string, Tensor>();
             m_InferenceOutputs = new List<TensorProxy>();
+            sentisModelInfo?.Dispose();
         }
 
         public InferenceDevice InferenceDevice
@@ -149,12 +153,16 @@ namespace Unity.MLAgents.Inference
         {
             if (m_Engine != null)
                 m_Engine.Dispose();
-            m_TensorAllocator?.Reset(false);
+            foreach (var (name, tensor) in m_InputsByName)
+            {
+                tensor.Dispose();
+            }
         }
 
         void FetchSentisOutputs(string[] names)
         {
             m_InferenceOutputs.Clear();
+
             foreach (var n in names)
             {
                 var output = m_Engine.PeekOutput(n);
@@ -200,7 +208,7 @@ namespace Unity.MLAgents.Inference
                 // Just grab the first agent in the collection (any will suffice, really).
                 // We check for an empty Collection above, so this will always return successfully.
                 var firstInfo = m_Infos[0];
-                m_TensorGenerator.InitializeObservations(firstInfo.sensors, m_TensorAllocator);
+                m_TensorGenerator.InitializeObservations(firstInfo.sensors);
                 m_ObservationsInitialized = true;
             }
 
@@ -218,7 +226,11 @@ namespace Unity.MLAgents.Inference
 
             // Execute the Model
             Profiler.BeginSample($"ExecuteGraph");
-            m_Engine.Execute(m_InputsByName);
+            foreach (var kv in m_InputsByName)
+            {
+                m_Engine.SetInput(kv.Key, kv.Value);
+            }
+            m_Engine.Schedule();
             Profiler.EndSample();
 
             Profiler.BeginSample($"FetchSentisOutputs");

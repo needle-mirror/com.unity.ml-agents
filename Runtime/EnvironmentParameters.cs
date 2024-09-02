@@ -35,7 +35,7 @@ namespace Unity.MLAgents
         /// </summary>
         /// <param name="key">The parameter key</param>
         /// <param name="defaultValue">Default value for this parameter.</param>
-        /// <returns></returns>
+        /// <returns>The parameter value for the specified key.</returns>
         public float GetWithDefault(string key, float defaultValue)
         {
             return m_Channel.GetWithDefault(key, defaultValue);
