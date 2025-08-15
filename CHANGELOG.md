@@ -6,10 +6,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2025-08-15
+### Major Changes
+#### com.unity.ml-agents (C#)
+- Upgraded to Inference Engine 2.2.1 (#6212)
+- The minimum supported Unity version was updated to 6000.0. (#6207)
+- Merged the extension package com.unity.ml-agents.extensions to the main package com.unity.ml-agents. (#6227)
+
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Removed broken sample from the package (#6230)
+- Moved to Unity Package documentation as the primary developer documentation. (#6232)
+
+#### ml-agents / ml-agents-envs
+- Bumped grpcio version to >=1.11.0,<=1.53.2 (#6208)
+
 ## [3.0.0] - 2024-09-02
 ### Major Changes
 #### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)
-- Upgraded to Sentis 2.1.0 ()
+- Upgraded to Sentis 2.1.0 (#6153)
 - Upgraded to Sentis 2.0.0 (#6137)
 - Upgraded to Sentis 1.3.0-pre.3 (#6070)
 - Upgraded to Sentis 1.3.0-exp.2 (#6013)

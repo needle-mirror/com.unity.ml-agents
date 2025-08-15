@@ -1,32 +1,25 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "3.0.0",
-  "unity": "2023.2",
+  "version": "4.0.0",
+  "unity": "6000.0",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
-    "com.unity.sentis": "2.1.0",
+    "com.unity.ai.inference": "2.2.1",
     "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
   },
-  "samples": [
-    {
-      "displayName": "3D Ball",
-      "description": "The 3D Ball sample is a simple environment that is a great for jumping into ML-Agents to see how things work.",
-      "path": "Samples~/3DBall"
-    }
-  ],
   "_upm": {
-    "changelog": "### Major Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Upgraded to Sentis 2.1.0 ()\n- Upgraded to Sentis 2.0.0 (#6137)\n- Upgraded to Sentis 1.3.0-pre.3 (#6070)\n- Upgraded to Sentis 1.3.0-exp.2 (#6013)\n- The minimum supported Unity version was updated to 2023.2. (#6071)\n\n#### ml-agents / ml-agents-envs\n- Upgraded to PyTorch 2.1.1. (#6013)\n\n### Minor Changes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Added no-graphics-monitor. (#6014)\n\n#### ml-agents / ml-agents-envs\n- Update Installation.md (#6004)\n- Updated Using-Virtual-Environment.md (#6033)\n\n### Bug Fixes\n#### com.unity.ml-agents / com.unity.ml-agents.extensions (C#)\n- Fix failing ci post upgrade (#6141)\n- Fixed missing assembly reference for google protobuf. (#6099)\n- Fixed missing tensor Dispose in ModelRunner. (#6028)\n- Fixed 3DBall sample package to remove Barracuda dependency. (#6030)\n\n#### ml-agents / ml-agents-envs\n- Fix sample code indentation in migrating.md (#5840)\n- Fixed continuous integration tests (#6079)\n- Fixed bad like format (#6078)\n- Bumped numpy version to >=1.23.5,<1.24.0 (#6082)\n- Bumped onnx version to 1.15.0 (#6062)\n- Bumped protobuf version to >=3.6,<21 (#6062)"
+    "changelog": "### Major Changes\n#### com.unity.ml-agents (C#)\n- Upgraded to Inference Engine 2.2.1 (#6212)\n- The minimum supported Unity version was updated to 6000.0. (#6207)\n- Merged the extension package com.unity.ml-agents.extensions to the main package com.unity.ml-agents. (#6227)\n\n### Minor Changes\n#### com.unity.ml-agents (C#)\n- Removed broken sample from the package (#6230)\n- Moved to Unity Package documentation as the primary developer documentation. (#6232)\n\n#### ml-agents / ml-agents-envs\n- Bumped grpcio version to >=1.11.0,<=1.53.2 (#6208)"
   },
   "upmCi": {
-    "footprint": "de8be02ce2952a2d1224de9f237187cb5787be24"
+    "footprint": "a8e2e6ce4d7cefc4e09a8e393d0902c60ee0a85f"
   },
-  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@3.0/manual/index.html",
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@4.0/manual/index.html",
   "repository": {
     "url": "https://github.com/Unity-Technologies/ml-agents.git",
     "type": "git",
-    "revision": "501ba880cc047f3efe0b140b6908ce26fa12b382"
+    "revision": "ec40182b9c9fab8f6ed256cdc638681e9aeb9a4d"
   }
 }

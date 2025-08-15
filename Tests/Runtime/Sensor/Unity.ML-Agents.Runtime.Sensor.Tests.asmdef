@@ -7,7 +7,7 @@
         "Unity.ML-Agents.Runtime.Utils.Tests",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Unity.Sentis"
+        "Unity.InferenceEngine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -21,7 +21,6 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [
-        "UNITY_INCLUDE_TESTS",
         "UNITY_INCLUDE_TESTS"
     ],
     "versionDefines": [
