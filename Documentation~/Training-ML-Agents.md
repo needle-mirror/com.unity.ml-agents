@@ -357,7 +357,7 @@ Below is a list of the `sampler_type` values supported by the toolkit.
 - `gaussian` - Gaussian sampler
   - Samples a single float value from a normal distribution with a given mean and standard deviation.
   - **parameters** - `mean`, `st_dev`
-- `multirange_uniform` - Multirange uniform sampler
+- `multirangeuniform` - Multirange uniform sampler
   - First, samples an interval from a set of intervals in proportion to relative length of the intervals. Then, uniformly samples a single float value from the sampled interval (inclusive). This sampler can take an arbitrary number of intervals in a list in the following format: [[`interval_1_min`, `interval_1_max`], [`interval_2_min`, `interval_2_max`], ...]
   - **parameters** - `intervals`
 

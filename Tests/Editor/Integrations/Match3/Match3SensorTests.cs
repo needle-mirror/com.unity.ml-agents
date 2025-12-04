@@ -146,9 +146,8 @@ namespace Unity.MLAgents.Tests.Integrations.Match3
             {
                 expectedObs = new float[]
                 {
-                    1, 0, /**/ 0, 1, /**/ 1, 0,
-                    1, 0, /**/ 1, 0, /**/ 1, 0,
-                    1, 0, /**/ 1, 0, /**/ 1, 0,
+                    // NCHW layout: [channel0_all_positions, channel1_all_positions]
+                    1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
                 };
 
                 expectedObs3D = new float[,,]
@@ -158,9 +157,8 @@ namespace Unity.MLAgents.Tests.Integrations.Match3
             {
                 expectedObs = new float[]
                 {
-                    1, 0, /*   0   */ 0, 1, /*   1   */ 0, 0, /* empty */
-                    1, 0, /*   0   */ 1, 0, /*   0   */ 0, 0, /* empty */
-                    0, 0, /* empty */ 0, 0, /* empty */ 0, 0, /* empty */
+                    // NCHW layout: [channel0_all_positions, channel1_all_positions] 
+                    1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
                 };
 
                 expectedObs3D = new float[,,]
@@ -201,9 +199,8 @@ namespace Unity.MLAgents.Tests.Integrations.Match3
 
                 var expectedObs = new float[]
                 {
-                    1, 0, /* (0) */ 0, 1, /* (1) */ 1, 0, /* (0) */
-                    1, 0, /* (0) */ 1, 0, /* (0) */ 1, 0, /* (0) */
-                    1, 0, /* (0) */ 1, 0, /* (0) */ 1, 0, /* (0) */
+                    // NCHW layout: [channel0_all_positions, channel1_all_positions]
+                    1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
                 };
                 SensorTestHelper.CompareObservation(cellSensor, expectedObs);
 
@@ -238,9 +235,8 @@ namespace Unity.MLAgents.Tests.Integrations.Match3
 
                 var expectedObs = new float[]
                 {
-                    1, 0, 0, /* (0) */ 1, 0, 0, /* (1) */ 1, 0, 0, /* (0) */
-                    0, 0, 1, /* (2) */ 1, 0, 0, /* (0) */ 1, 0, 0, /* (0) */
-                    1, 0, 0, /* (0) */ 0, 1, 0, /* (1) */ 1, 0, 0, /* (0) */
+                    // NCHW layout: [channel0_all_positions, channel1_all_positions, channel2_all_positions]
+                    1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
                 };
                 SensorTestHelper.CompareObservation(specialSensor, expectedObs);
 

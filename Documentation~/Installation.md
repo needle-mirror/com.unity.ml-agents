@@ -1,107 +1,139 @@
-# Installation
-To install and use the ML-Agents Toolkit, follow the steps below. Detailed instructions for each step are provided later on this page.
+# Install the ML-Agents Toolkit
+Set up your system to use the ML-Agents Toolkit to train and run machine-learning agents in Unity projects.
 
-1. Install Unity (6000.0 or later)
-2. Install Python (>= 3.10.1, <=3.10.12) - we recommend using 3.10.12
-3. Install the `com.unity.ml-agents` Unity package; or clone this repository and install locally (recommended for the latest version and bug fixes)
-4. Install `mlagents-envs`
-5. Install `mlagents`
+This process includes installing Unity, configuring Python, and installing the ML-Agents packages. Follow the steps in order to ensure compatibility between Unity and the ML-Agents components.
 
-### Install **Unity 6000.0** or Later
 
-[Download](https://unity3d.com/get-unity/download) and install Unity. We strongly recommend that you install Unity through the Unity Hub as it will enable you to manage multiple Unity versions.
 
-### Install **Python 3.10.12**
+##  Install Unity
 
-We recommend [installing](https://www.python.org/downloads/) Python 3.10.12. If you are using Windows, please install the x86-64 version and not x86. If your Python environment doesn't include `pip3`, see these [instructions](https://packaging.python.org/guides/installing-using-linux-tools/#installing-pip-setuptools-wheel-with-linux-package-managers) on installing it. We also recommend using [conda](https://docs.conda.io/en/latest/) or [mamba](https://github.com/mamba-org/mamba) to manage your python virtual environments.
+Install Unity 6000.0 or later to use the ML-Agents Toolkit.
 
-#### Conda python setup
+To install Unity, follow these steps:
 
-Once conda has been installed in your system, open a terminal and execute the following commands to setup a python 3.10.12 virtual environment and activate it.
+1. [Download Unity](https://unity3d.com/get-unity/download).
+2. Use **Unity Hub** to manage installations and versions.
+   Unity Hub makes it easier to manage multiple Unity versions and associated projects.
+3. Verify that the Unity Editor version is 6000.0 or later.
+
+## Install Python 3.10.12 using Conda
+
+Use Conda or Mamba to install and manage your Python environment. This ensures that ML-Agents dependencies are isolated and version-controlled.
+
+To install Python, follow these steps:
+
+1. Install [Conda](https://docs.conda.io/en/latest/) or [Mamba](https://github.com/mamba-org/mamba).
+2. Open a terminal and create a new Conda environment with Python 3.10.12:
+
+   ```shell
+   conda create -n mlagents python=3.10.12 && conda activate mlagents
+
+3. On **Windows**, install PyTorch separately to ensure CUDA support:
 
 ```shell
-conda create -n mlagents python=3.10.12 && conda activate mlagents
+pip3 install torch~=2.2.1 --index-url https://download.pytorch.org/whl/cu121
 ```
+If prompted, install Microsoft Visual C++ Redistributable. For more installation options and versions, refer to the [PyTorch installation guide](https://pytorch.org/get-started/locally/).
 
-### Install the `com.unity.ml-agents` Unity package
 
-The Unity ML-Agents C# SDK is a Unity Package. You can install the `com.unity.ml-agents` package [directly from the Package Manager registry](https://docs.unity3d.com/Manual/upm-ui-install.html). Please make sure you enable 'Preview Packages' in the 'Advanced' dropdown in order to find the latest Preview release of the package.
+## Install ML-Agents
+You can install ML-Agents in two ways:
 
-**NOTE:** If you do not see the ML-Agents package listed in the Package Manager please follow the advanced installation instructions below.
+* [Package installation](#install-ml-agents-package-installation): Recommended for most users who want to use ML-Agents without modifying the source code or using the example environments.
+* [Advanced installation](#install-ml-agents-advanced-installation): For contributors, developers extending ML-Agents, or users who want access to the example environments.
 
-#### Advanced: Local Installation for Development
+### Install ML-Agents (Package installation)
 
-You will need to clone the repository if you plan to modify or extend the ML-Agents Toolkit for your purposes, or if you'd like to download our example environments. Some of our tutorials / guides assume you have access to our example environments.
+Use this method if you don’t plan to modify the toolkit or need the example environments.
 
-Use the command below to clone the repository
+#### Install the ML-Agents Unity package
+
+To install the package, follow these steps:
+
+1. In Unity, open **Window** > **Package Manager**.
+2. Select **+** > **Add package by name**.
+3. Enter `com.unity.ml-agents`.
+4. Enable **Preview Packages** under the **Advanced** drop-down list if the package doesn’t appear.
+
+If the package isn’t listed, follow the [Advanced Installation](#install-ml-agents-advanced-installation) method instead.
+
+
+
+#### Install the ML-Agents Python package
+
+Install the ML-Agents Python package to enable communication between Unity and your machine learning training environment.
+
+Using a Python virtual environment helps isolate project dependencies and prevent version conflicts across your system. Virtual environments are supported on macOS, Windows, and Linux. For more information, refer to [Using Virtual Environments](Using-Virtual-Environment.md).
+
+1. Before installing ML-Agents, activate the Conda environment you created.
+
+
+2. Install the ML-Agents Python package from the Python Package Index (PyPI):
+
+```shell
+python -m pip install mlagents==1.1.0
+```
+Make sure to install a Python package version that matches your Unity ML-Agents package version. For information on compatible versions, refer to the [ML-Agents release history](https://github.com/Unity-Technologies/ml-agents/releases).
+
+3. If you encounter an error while building the `grpcio` wheel, install it separately before reinstalling `mlagents`:
+
+```shell
+conda install "grpcio=1.48.2" -c conda-forge
+```
+This step resolves dependency conflicts that can occur with older versions of `grpcio`.
+
+4. When the installation completes successfully, all the required Python dependencies listed in the [setup.py file](https://github.com/Unity-Technologies/ml-agents/blob/release/4.0.0/ml-agents/setup.py), including [PyTorch](Background-PyTorch.md) are automatically configured.
+
+
+### Install ML-Agents (Advanced Installation)
+
+Use the advanced installation method if you plan to modify or extend the ML-Agents Toolkit, or if you want to download and use the example environments included in the repository.
+
+#### Clone the ML-Agents repository
+
+Clone the ML-Agents repository to access the source code, sample environments, and development branches.
+
+To clone the latest stable release, run:
 
 ```sh
 git clone --branch release_23 https://github.com/Unity-Technologies/ml-agents.git
 ```
 
-The `--branch release_23` option will switch to the tag of the latest stable release. Omitting that will get the `develop` branch which is potentially unstable. However, if you find that a release branch does not work, the recommendation is to use the `develop` branch as it may have potential fixes for bugs and dependency issues.
-
-(Optional to get bleeding edge)
-
+The `--branch release_23` flag checks out the latest stable release.
+If you omit this option, the `develop` branch is cloned instead, which may contain experimental or unstable changes.
+If the release branch does not work as expected, switch to the develop branch. It may include fixes for dependency or compatibility issues.
+To clone the bleeding-edge development version (optional), run:
 ```sh
 git clone https://github.com/Unity-Technologies/ml-agents.git
 ```
+If you plan to contribute your changes, clone the develop branch (omit the `--branch` flag) and refer to the [Contribution Guidelines](CONTRIBUTING.md) for details.
 
-If you plan to contribute those changes back, make sure to clone the `develop` branch (by omitting `--branch release_23` from the command above). See our [Contributions Guidelines](CONTRIBUTING.md) for more information on contributing to the ML-Agents Toolkit.
 
-You can [add the local](https://docs.unity3d.com/Manual/upm-ui-local.html) `com.unity.ml-agents` package (from the repository that you just cloned) to your project by:
+#### Add the ML-Agents Unity package
 
-1. navigating to the menu `Window` -> `Package Manager`.
-2. In the package manager window click on the `+` button on the top left of the packages list).
-3. Select `Add package from disk...`
-4. Navigate into the `com.unity.ml-agents` folder.
+After cloning the repository, add the `com.unity.ml-agents` Unity package to your project.
+
+To add the local package, follow these steps:
+
+1. In the Unity Editor, go to **Window** > **Package Manager**.
+2. In the **Package Manager** window, select **+**.
+3. Select **Add package from disk**.
+4. Navigate to the cloned repository and open the `com.unity.ml-agents` folder.
 5. Select the `package.json` file.
+
+Unity adds the ML-Agents package to your project.
+
+If you plan to use the example environments provided in the repository, open the **Project** folder in Unity to explore and experiment with them.
+
 
 <p align="center"> <img src="images/unity_package_manager_window.png" alt="Unity Package Manager Window" height="150" border="10" /> <img src="images/unity_package_json.png" alt="package.json" height="150" border="10" /> </p>
 
-If you are going to follow the examples from our documentation, you can open the
-`Project` folder in Unity and start tinkering immediately.
 
-### Install Python package
+#### Install the ML-Agents Python package
 
-Installing the `mlagents` Python package involves installing other Python packages that `mlagents` depends on. So you may run into installation issues if your machine has older versions of any of those dependencies already installed. Consequently, our supported path for installing `mlagents` is to leverage Python Virtual Environments. Virtual Environments provide a mechanism for isolating the dependencies for each project and are supported on Mac / Windows / Linux. We offer a dedicated [guide on Virtual Environments](Using-Virtual-Environment.md).
+Install the Python packages from the cloned repository to enable training and environment communication.
 
-#### Installing `mlagents` from PyPi
-
-You can install the ML-Agents Python package directly from PyPi. This is the recommended approach if you installed the C# package via the Package Manager registry.
-
-**Important:** Ensure you install a Python package version that matches your Unity package version. Check the [release history](https://github.com/Unity-Technologies/ml-agents/releases) to find compatible versions.
-
-To install, activate your virtual environment and run the following command:
-
-```shell
-python -m pip install mlagents==1.1.0
-```
-
-which will install the latest version of ML-Agents Python packages and associated dependencies available on PyPi. If building the wheel for `grpcio` fails, run the following command before installing `mlagents` with pip:
-
-```shell
-conda install "grpcio=1.48.2" -c conda-forge
-```
-
-When you install the Python package, the dependencies listed in the [setup.py file](https://github.com/Unity-Technologies/ml-agents/blob/release/4.0.0/ml-agents/setup.py) are also installed. These include [PyTorch](Background-PyTorch.md).
-
-
-#### Advanced: Local Installation for Development
-
-##### (Windows) Installing PyTorch
-
-On Windows, you'll have to install the PyTorch package separately prior to installing ML-Agents in order to make sure the cuda-enabled version is used, rather than the CPU-only version. Activate your virtual environment and run from the command line:
-
-```sh
-pip3 install torch~=2.2.1 --index-url https://download.pytorch.org/whl/cu121
-```
-
-Note that on Windows, you may also need Microsoft's Visual C++ Redistributable if you don't have it already. See the [PyTorch installation guide](https://pytorch.org/get-started/locally/) for more installation options and versions.
-
-##### All Platforms
-
-To install the `mlagents` Python package, activate your virtual environment and run from the command line:
+1. From the root of the cloned repository, activate your virtual environment and run:
 
 ```sh
 cd /path/to/ml-agents
@@ -109,11 +141,17 @@ python -m pip install ./ml-agents-envs
 python -m pip install ./ml-agents
 ```
 
-Note that this will install `mlagents` from the cloned repository, _not_ from the PyPi repository. If you installed this correctly, you should be able to run `mlagents-learn --help`, after which you will see the command line parameters you can use with `mlagents-learn`.
+This installs the ML-Agents packages directly from the cloned source, _not_ from PyPi.
 
+2. To confirm a successful installation, run:
+`mlagents-learn --help`
 
+If the command lists available parameters, your setup is complete.
 
-If you intend to make modifications to `mlagents` or `mlagents_envs`, from the repository's root directory, run:
+3. If you plan to modify the ML-Agents source code or contribute changes, install the packages in editable mode.
+Editable installs let you make live changes to the Python files and test them immediately.
+
+From the repository’s root directory, run:
 
 ```sh
 pip3 install torch -f https://download.pytorch.org/whl/torch_stable.html
@@ -121,4 +159,7 @@ pip3 install -e ./ml-agents-envs
 pip3 install -e ./ml-agents
 ```
 
-Running pip with the `-e` flag will let you make changes to the Python files directly and have those reflected when you run `mlagents-learn`. It is important to install these packages in this order as the `mlagents` package depends on `mlagents_envs`, and installing it in the other order will download `mlagents_envs` from PyPi.
+Note:
+
+Install the packages in this order. The `mlagents` package depends on `mlagents_envs`.
+Installing them in the other order will download `mlagents_envs` from PyPi, which can cause version mismatches.

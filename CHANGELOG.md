@@ -6,7 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0] - 2025-08-15
+## [4.0.1] - 2025-12-04
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Upgraded to Inference Engine 2.4.1 (#6269)
+- Fixed tensor indexing to use correct CHW layout (#6239)
+- Updated the installation doc (#6242)
+- Fixed Unity Editor crashing when quitting in play mode (#6274)
+
+#### ml-agents / ml-agents-envs
+- Set the Torch version constraint to 2.8 (#6251)
+- Fixed CUDA/CPU mismatch in threaded training (#6245)
+
+## [4.0.0] - 2025-08-28
 ### Major Changes
 #### com.unity.ml-agents (C#)
 - Upgraded to Inference Engine 2.2.1 (#6212)
