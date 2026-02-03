@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.0.2] - 2026-02-03
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Tests have been migrated to a companion package `com.unity.ml-agents.tests` to conform with the recommandations and best practices of Unity (#6280)
+- Upgraded to Inference Engine 2.5.0 (#6280)
+
 ## [4.0.1] - 2025-12-04
 ### Minor Changes
 #### com.unity.ml-agents (C#)
