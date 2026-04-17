@@ -13,7 +13,7 @@ namespace Unity.MLAgents.Actuators
         /// <summary>
         /// An empty action buffer.
         /// </summary>
-        public static ActionBuffers Empty = new ActionBuffers(ActionSegment<float>.Empty, ActionSegment<int>.Empty);
+        public static readonly ActionBuffers Empty = new ActionBuffers(ActionSegment<float>.Empty, ActionSegment<int>.Empty);
 
         /// <summary>
         /// Holds the Continuous <see cref="ActionSegment{T}"/> to be used by an <see cref="IActionReceiver"/>.

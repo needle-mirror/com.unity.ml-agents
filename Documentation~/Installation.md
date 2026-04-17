@@ -25,8 +25,9 @@ To install Python, follow these steps:
 1. Install [Conda](https://docs.conda.io/en/latest/) or [Mamba](https://github.com/mamba-org/mamba).
 2. Open a terminal and create a new Conda environment with Python 3.10.12:
 
-   ```shell
-   conda create -n mlagents python=3.10.12 && conda activate mlagents
+```shell
+conda create -n mlagents python=3.10.12 && conda activate mlagents
+```
 
 3. On **Windows**, install PyTorch separately to ensure CUDA support:
 
@@ -123,7 +124,8 @@ To add the local package, follow these steps:
 
 Unity adds the ML-Agents package to your project.
 
-If you plan to use the example environments provided in the repository, open the **Project** folder in Unity to explore and experiment with them.
+> [!NOTE]
+> If you plan to use the example environments provided in the repository, open the **Project** folder in Unity to explore and experiment with them. Refer to [Configure example environments](Examples-setup.md) for full set up instructions.
 
 
 <p align="center"> <img src="images/unity_package_manager_window.png" alt="Unity Package Manager Window" height="150" border="10" /> <img src="images/unity_package_json.png" alt="package.json" height="150" border="10" /> </p>
@@ -159,7 +161,6 @@ pip3 install -e ./ml-agents-envs
 pip3 install -e ./ml-agents
 ```
 
-Note:
-
-Install the packages in this order. The `mlagents` package depends on `mlagents_envs`.
-Installing them in the other order will download `mlagents_envs` from PyPi, which can cause version mismatches.
+> [!NOTE]
+> Install the packages in this order because the `mlagents` package depends on `mlagents_envs`.
+> Installing them in the order will download `mlagents_envs` from PyPi, which can cause version mismatches.

@@ -27,7 +27,7 @@ The package allows you to convert any Unity scene into a learning environment an
 * Define Agents: entities, or characters, whose behavior will be learned. Agents are entities that generate observations (through sensors), take actions, and receive rewards from the environment.
 * Define Behaviors: entities that specify how an agent should act. Multiple agents can share the same Behavior and a scene may have multiple Behaviors.
 * Record demonstrations: To show the behaviors of an agent within the Editor. You can use demonstrations to help train a behavior for that agent.
-* Embed a trained behavior (aka: run your ML model) in the scene via the [Inference Engine](https://docs.unity3d.com/Packages/com.unity.ai.inference@latest). Embedded behaviors allow you to switch an Agent between learning and inference.
+* Embed a trained behavior (aka: run your ML model) in the scene via [Sentis](https://docs.unity3d.com/Packages/com.unity.ai.inference@latest). Embedded behaviors allow you to switch an Agent between learning and inference.
 
 ## Community and Feedback
 

@@ -64,17 +64,17 @@ The [Running an Example](Sample.md) guide covers this training mode with the **3
 
 #### Cross-Platform Inference
 
-It is important to note that the ML-Agents Toolkit leverages the [Inference Engine](Inference-Engine.md) to run the models within a Unity scene such that an agent can take the _optimal_ action at each step. Given that Inference Engine supports all Unity runtime platforms, this means that any model you train with the ML-Agents Toolkit can be embedded into your Unity application that runs on any platform.
+It is important to note that the ML-Agents Toolkit leverages [Sentis](Inference-Engine.md) to run the models within a Unity scene such that an agent can take the _optimal_ action at each step. Given that Sentis supports all Unity runtime platforms, this means that any model you train with the ML-Agents Toolkit can be embedded into your Unity application that runs on any platform.
 
 ### Custom Training and Inference
 
 In the previous mode, the Agents were used for training to generate a PyTorch model that the Agents can later use. However, any user of the ML-Agents Toolkit can leverage their own algorithms for training. In this case, the behaviors of all the Agents in the scene will be controlled within Python. You can even turn your environment into a [gym.](Python-Gym-API.md)
 
-We do not currently have a tutorial highlighting this mode, but you can learn more about the Python API [here](Python-LLAPI.md).
+Unity doesn't provide a tutorial highlighting this mode, but you can learn more about the Python API in [Unity ML-Agents Python Low Level API](Python-LLAPI.md).
 
 ## Flexible Training Scenarios
 
-While the discussion so-far has mostly focused on training a single agent, with ML-Agents, several training scenarios are possible. We are excited to see what kinds of novel and fun environments the community creates. For those new to training intelligent agents, below are a few examples that can serve as inspiration:
+While the discussion so-far has mostly focused on training a single agent, with ML-Agents, several training scenarios are possible. You can use ML-Agents to create novel and fun environments. For those new to training intelligent agents, some examples for inspiration are:
 
 - Single-Agent. A single agent, with its own reward signal. The traditional way of training an agent. An example is any single-player game, such as Chicken.
 - Simultaneous Single-Agent. Multiple independent agents with independent reward signals with same `Behavior Parameters`. A parallelized version of the traditional training scenario, which can speed-up and stabilize the training process. Helpful when you have multiple versions of the same character in an environment who should learn similar behaviors. An example might be training a dozen robot-arms to each open a door simultaneously.
@@ -89,9 +89,9 @@ The remaining sections overview the various state-of-the-art machine learning al
 
 This section specifically focuses on the training methods that are available regardless of the specifics of your learning environment.
 
-#### A Quick Note on Reward Signals
+#### A note on reward signals
 
-In this section we introduce the concepts of _intrinsic_ and _extrinsic_ rewards, which helps explain some of the training methods.
+This section introduces the concepts of _intrinsic_ and _extrinsic_ rewards, which helps explain some training methods.
 
 In reinforcement learning, the end goal for the Agent is to discover a behavior (a Policy) that maximizes a reward. You will need to provide the agent one or more reward signals to use during training. Typically, a reward is defined by your environment, and corresponds to reaching some goal. These are what we refer to as _extrinsic_ rewards, as they are defined external of the learning algorithm.
 

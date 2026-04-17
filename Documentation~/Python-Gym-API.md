@@ -50,11 +50,7 @@ These examples were tested with baselines version 0.1.6.
 
 ### Example - DQN Baseline
 
-In order to train an agent to play the `GridWorld` environment using the Baselines DQN algorithm, you first need to install the baselines package using pip:
-
-```
-pip install git+git://github.com/openai/baselines
-```
+To train an agent to play the `GridWorld` environment using the Baselines DQN algorithm, you first need to install the Baselines package. For instructions, refer to the [Baselines README](https://github.com/openai/baselines).
 
 Next, create a file called `train_unity.py`. Then create an `/envs/` directory and build the environment to that directory. For more information on building Unity environments, see [here](Learning-Environment-Executable.md). Note that because of limitations of the DQN baseline, the environment must have a single visual observation, a single discrete action and a single Agent in the scene. Add the following code to the `train_unity.py` file:
 

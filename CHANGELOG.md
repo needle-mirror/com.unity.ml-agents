@@ -5,6 +5,13 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+## [4.0.3] - 2026-04-17
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Support for Fast Enter Play Mode required by Core CLR (#6288)
+- Fix deprecated instanceID API usages in com.unity.ml-agents (#6287)
+- Improve documentation on how to set up local environments (#6289)
+- Upgraded to Sentis 2.6.1 (#6291)
 
 ## [4.0.2] - 2026-02-03
 ### Minor Changes

@@ -5,7 +5,7 @@
 TODO: update ml-agents-env package version before release
 --->
 ## Migrating the package to version 4.x
-- Unity ML-Agents now supports Inference Engine. If you run into issues, please refer to the [Upgrade to Inference Engine](https://docs.unity3d.com/Packages/com.unity.ai.inference@latest/index.html?subfolder=/manual/upgrade-guide.html) documentation.
+- Unity ML-Agents now supports Sentis. If you run into issues, please refer to the [Upgrade to Sentis](https://docs.unity3d.com/Packages/com.unity.ai.inference@latest/index.html?subfolder=/manual/upgrade-guide.html) documentation.
 
 ## Migrating to the ml-agents-envs 0.30.0 package
 - Python 3.10.12 is now the minimum version of python supported due to [python3.6 EOL](https://endoflife.date/python). Please update your python installation to 3.10.12 or higher.

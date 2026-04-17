@@ -36,7 +36,7 @@ namespace Unity.MLAgents.Input
         /// <summary>
         /// Mapping of <see cref="InputControl"/> types to types of <see cref="IRLActionInputAdaptor"/> concrete classes.
         /// </summary>
-        public static Dictionary<Type, Type> controlTypeToAdaptorType = new Dictionary<Type, Type>
+        public static readonly Dictionary<Type, Type> controlTypeToAdaptorType = new Dictionary<Type, Type>
         {
             { typeof(Vector2Control), typeof(Vector2InputActionAdaptor) },
             { typeof(ButtonControl), typeof(ButtonInputActionAdaptor) },

@@ -1,12 +1,14 @@
-# Example Learning Environments
+# Example learning environments reference
 
 <img src="images/example-envs.png" align="middle" width="3000"/>
 
-The Unity ML-Agents Toolkit includes an expanding set of example environments that highlight the various features of the toolkit. These environments can also serve as templates for new environments or as ways to test new ML algorithms. Environments are located in `Project/Assets/ML-Agents/Examples` and summarized below.
+The Unity ML-Agents Toolkit includes a set of example environments that highlight the features of the toolkit. You can use these environments as templates for new environments, or as ways to test new ML algorithms.
 
-For the environments that highlight specific features of the toolkit, we provide the pre-trained model files and the training config file that enables you to train the scene yourself. The environments that are designed to serve as challenges for researchers do not have accompanying pre-trained model files or training configs and are marked as _Optional_ below.
+You can access the example learning environments from `Project/Assets/ML-Agents/Examples` as outlined in [Configure learning environments](Examples-setup.md).
 
-This page only overviews the example environments we provide. To learn more on how to design and build your own environments see our [Making a New Learning Environment](Learning-Environment-Create-New.md) page. If you would like to contribute environments, please see our [contribution guidelines](CONTRIBUTING.md) page.
+For the environments that highlight specific features of the toolkit, Unity provides the pre-trained model files and the training config file that enables you to train the scene yourself. Some environments are designed to serve as challenges for researchers and don't have accompanying pre-trained model files or training configs (marked as _Optional_ in the following sections).
+
+This page only overviews the example environments Unity provides. To learn more on how to design and build your own environments, refer to [Making a New Learning Environment](Learning-Environment-Create-New.md) page. To learn more about contributing your own environments, refer to the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Basic
 

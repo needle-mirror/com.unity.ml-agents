@@ -1,11 +1,11 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "unity": "6000.0",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
-    "com.unity.ai.inference": "2.5.0",
+    "com.unity.ai.inference": "2.6.1",
     "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
@@ -14,15 +14,15 @@
     "com.unity.ml-agents.tests": "1.0.0"
   },
   "_upm": {
-    "changelog": "### Minor Changes\n#### com.unity.ml-agents (C#)\n- Tests have been migrated to a companion package `com.unity.ml-agents.tests` to conform with the recommandations and best practices of Unity (#6280)\n- Upgraded to Inference Engine 2.5.0 (#6280)"
+    "changelog": "### Minor Changes\n#### com.unity.ml-agents (C#)\n- Support for Fast Enter Play Mode required by Core CLR (#6288)\n- Fix deprecated instanceID API usages in com.unity.ml-agents (#6287)\n- Improve documentation on how to set up local environments (#6289)\n- Upgraded to Sentis 2.6.1 (#6291)"
   },
   "upmCi": {
-    "footprint": "d7285f5713a37cac9727678c2ad7c59b481392fa"
+    "footprint": "6f763932b1dabb5b2c8be47c048490ec5ad80a84"
   },
   "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@4.0/manual/index.html",
   "repository": {
     "url": "https://github.com/Unity-Technologies/ml-agents.git",
     "type": "git",
-    "revision": "429157137de4f9c78235e3baa53d11b090e6ca81"
+    "revision": "57d5307b54eac5edb142c1c7c762f0b5a95e4cec"
   }
 }

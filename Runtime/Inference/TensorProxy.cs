@@ -44,6 +44,7 @@ namespace Unity.MLAgents.Inference
         public Type DataType => k_TypeMap[valueType];
         public DataType DType => k_DTypeMap[valueType];
         public int[] shape;
+        [NonSerialized]
         public Tensor data;
         public BackendType Device => data.dataOnBackend.backendType;
 

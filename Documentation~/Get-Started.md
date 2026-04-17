@@ -12,5 +12,4 @@ Use the following topics to get started with ML-Agents.
 | **Section**                                                   | **Description**                    |
 |---------------------------------------------------------------|------------------------------------|
 | [Install ML-Agents](Installation.md)                          | Install ML-Agents.                 |
-| [Sample: Running an Example Environment](Sample.md)           | Learn how to run a sample project. |
-| [More Example Environments](Learning-Environment-Examples.md) | Explore 17+ sample environments.   |
+| [Example environments](Examples.md)           | Learn about and use ML-Agents samples to help you get started. |

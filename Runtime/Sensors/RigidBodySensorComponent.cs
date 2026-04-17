@@ -31,7 +31,6 @@ namespace Unity.MLAgents.Sensors
         [SerializeField]
         public string sensorName;
 
-        [SerializeField]
         [HideInInspector]
         RigidBodyPoseExtractor m_PoseExtractor;
 
