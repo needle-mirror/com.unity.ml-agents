@@ -1,7 +1,7 @@
 {
   "name": "com.unity.ml-agents",
   "displayName": "ML Agents",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "unity": "6000.0",
   "description": "Use state-of-the-art machine learning to create intelligent character behaviors in any Unity environment (games, robotics, film, etc.).",
   "dependencies": {
@@ -14,15 +14,15 @@
     "com.unity.ml-agents.tests": "1.0.0"
   },
   "_upm": {
-    "changelog": "### Minor Changes\n#### com.unity.ml-agents (C#)\n- Support for Fast Enter Play Mode required by Core CLR (#6288)\n- Fix deprecated instanceID API usages in com.unity.ml-agents (#6287)\n- Improve documentation on how to set up local environments (#6289)\n- Upgraded to Sentis 2.6.1 (#6291)"
+    "changelog": "### Major Changes\n#### ml-agents / ml-agents-envs\n- Migrated from gym to gymnasium (#6309)\n\n### Minor Changes\n#### com.unity.ml-agents (C#)\n- Fixed `StackingSensor` compressed observation for sensors with more than 3 channels. (#6299)\n- Fixed a crash that could occur when exiting Play mode. (#6296)\n- Fixed compatibility of `Google.Protobuf_Packed.dll` with IL2CPP. (#6313)\n- Fixed `Google.Protobuf_Packed.dll` being shadowed by Sentis' copy of the DLL. (#6310)\n\n#### ml-agents / ml-agents-envs\n- Fixed a bug when using LSTM and SAC where the buffer might contain non-integer numbers of sequences. (#6301)\n- Fixed mixed CPU/GPU computation by ensuring tensors share a consistent device in the trainer. Updated training devices. (#6303)\n- Fixed typing on optional strings. (#6311)\n- Tightened assertion bound for `test_process_pixels_gray` (#6312)\n\n#### Examples\n- Replace hardcoded value `200f` by `agentRotationSpeed` in `MoveAgent()`. (#6306)"
   },
   "upmCi": {
-    "footprint": "6f763932b1dabb5b2c8be47c048490ec5ad80a84"
+    "footprint": "62c921b458e952ff2825012e6cf2c5aeadf91417"
   },
-  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@4.0/manual/index.html",
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.ml-agents@4.1/manual/index.html",
   "repository": {
     "url": "https://github.com/Unity-Technologies/ml-agents.git",
     "type": "git",
-    "revision": "57d5307b54eac5edb142c1c7c762f0b5a95e4cec"
+    "revision": "ee0a08ccae597094003844d0121317f9790a1676"
   }
 }

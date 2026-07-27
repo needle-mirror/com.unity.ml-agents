@@ -254,10 +254,16 @@ namespace Unity.MLAgents.Inference
                 else
                 {
                     var tensorOffset = 0;
+                    var tensorCapacity = tensorProxy.data.shape.rank >= 2 ? tensorProxy.data.shape[1] : 0;
 
-                    // Write each sensor consecutively to the tensor
                     for (var sensorIndexIndex = 0; sensorIndexIndex < m_SensorIndices.Count; sensorIndexIndex++)
                     {
+                        if (tensorOffset >= tensorCapacity)
+                        {
+                            UnityEngine.Debug.LogWarning($"[ml-agents] Sensor write overflow: tensorOffset ({tensorOffset}) reached tensor capacity ({tensorCapacity}). Skipping remaining sensors to prevent buffer overrun.");
+                            break;
+                        }
+
                         var sensorIndex = m_SensorIndices[sensorIndexIndex];
                         var sensor = info.sensors[sensorIndex];
                         m_ObservationWriter.SetTarget(tensorProxy, agentIndex, tensorOffset);

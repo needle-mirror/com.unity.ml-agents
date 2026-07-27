@@ -5,6 +5,28 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [4.1.0] - 2026-07-27
+### Major Changes
+#### ml-agents / ml-agents-envs
+- Migrated from gym to gymnasium (#6309)
+
+### Minor Changes
+#### com.unity.ml-agents (C#)
+- Fixed `StackingSensor` compressed observation for sensors with more than 3 channels. (#6299)
+- Fixed a crash that could occur when exiting Play mode. (#6296)
+- Fixed compatibility of `Google.Protobuf_Packed.dll` with IL2CPP. (#6313)
+- Fixed `Google.Protobuf_Packed.dll` being shadowed by Sentis' copy of the DLL. (#6310)
+
+#### ml-agents / ml-agents-envs
+- Fixed a bug when using LSTM and SAC where the buffer might contain non-integer numbers of sequences. (#6301)
+- Fixed mixed CPU/GPU computation by ensuring tensors share a consistent device in the trainer. Updated training devices. (#6303)
+- Fixed typing on optional strings. (#6311)
+- Tightened assertion bound for `test_process_pixels_gray` (#6312)
+
+#### Examples
+- Replace hardcoded value `200f` by `agentRotationSpeed` in `MoveAgent()`. (#6306)
+
 ## [4.0.3] - 2026-04-17
 ### Minor Changes
 #### com.unity.ml-agents (C#)
@@ -116,7 +138,7 @@ and this project adheres to
 #### ml-agents / ml-agents-envs
 - Add your trainers to the package using Ml-Agents Custom Trainers plugin. (#)
   - ML-Agents Custom Trainers plugin is an extensible plugin system to define new trainers based on the
-  High level trainer API, read more [here](../docs/Python-Custom-Trainer-Plugin.md).
+  High level trainer API, read more [here](https://github.com/Unity-Technologies/ml-agents/blob/release_20_docs/docs/Python-Custom-Trainer-Plugin.md).
 - Refactored core modules to make ML-Agents internal classes more generalizable to various RL algorithms. (#)
 - The minimum supported Python version for ML-agents has changed to 3.8.13. (#)
 - The minimum supported version of PyTorch was changed to 1.8.0. (#)
@@ -980,7 +1002,7 @@ vector observations to be used simultaneously. (#3981) Thank you @shakenes !
 - Uncompressed visual (i.e. 3d float arrays) observations are now supported.
   CameraSensorComponent and RenderTextureSensor now have an option to write
   uncompressed observations (#3148)
-- Agent’s handling of observations during training was improved so that an extra
+- Agent's handling of observations during training was improved so that an extra
   copy of the observations is no longer maintained (#3229)
 - Error message for missing trainer config files was improved to include the
   absolute path (#3230)
@@ -989,7 +1011,7 @@ vector observations to be used simultaneously. (#3981) Thank you @shakenes !
 
 ### Bug Fixes
 
-- Numpy warning when stats don’t exist (#3251)
+- Numpy warning when stats don't exist (#3251)
 - A bug that caused RayPerceptionSensor to behave inconsistently with transforms
   that have non-1 scale was fixed (#3321)
 - Some small bugfixes to tensorflow_to_barracuda.py were backported from the
